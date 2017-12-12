@@ -37,7 +37,7 @@ public class server  {
 		Socket socket = null;
 		ServerSocket serverSocket =null;
 		try {
-			frame.mainText.setText("���Ӵ����...\n");
+			frame.mainText.setText("서버오픈\n");
 			serverSocket=new ServerSocket(7777);
 			while(true) {
 				socket=serverSocket.accept();
@@ -55,7 +55,7 @@ public class server  {
 	}	
 }
 
-//���� �����ؼ� ������ �޴� �κ�
+
 	class Connect extends Thread{
 			
 		Socket socket;

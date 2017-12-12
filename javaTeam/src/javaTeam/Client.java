@@ -30,7 +30,7 @@ import java.util.StringTokenizer;
 				ip=inet.getAddress();
 				
 				if(socket.isConnected())
-					frame.mainText.append("접속중...\n");
+					frame.mainText.append("접속완료\n");
 				ClientThread userThread=new ClientThread(socket, ip,frame);
 				userThread.start();
 				sendThread sendThread=new sendThread(socket, frame);
@@ -103,8 +103,12 @@ import java.util.StringTokenizer;
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					frame.btnSend.getText();
-					dos.writeUTF(data);
+					String data=frame.btnSend.getText();
+					try {
+						dos.writeUTF(data);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			});
 		}
