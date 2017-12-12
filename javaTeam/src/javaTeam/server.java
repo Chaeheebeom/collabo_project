@@ -16,11 +16,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import javax.sound.midi.Receiver;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 
@@ -29,126 +31,86 @@ import org.omg.PortableInterceptor.ClientRequestInfoOperations;
 
 public class server  {
 	
-	static Vector<ClientVO> vec=new Vector<>();
-	
 	public static void main(String[] args) throws IOException {
-		ServerFrame frame=new ServerFrame();
-		frame.setVisible(true);
+		
+		Vector<ClientVO> vec=new Vector<>();//접속한 클라이언트정보를 저장할 것(소켓으로 저장)
+		ClientVO vo=null;
 		Socket socket = null;
 		ServerSocket serverSocket =null;
+		//프레임보여주기
+		ServerFrame frame=new ServerFrame();
+		frame.setVisible(true);
+		
 		try {
 			frame.mainText.setText("서버오픈\n");
 			serverSocket=new ServerSocket(7777);
 			while(true) {
 				socket=serverSocket.accept();
-				if(socket.isConnected()) {
-				Connect con=new Connect(socket,frame);
-				con.start();
-				}
+				vo=new ClientVO(socket);
+				vec.add(vo); //접속한 클라이언트 누적.
+				InetAddress inet=socket.getInetAddress(); //소켓안에있는 ip주소 inet안에는 호스트의 ip주소 이름 다 있음
+				frame.mainText.append(inet.getHostAddress()+"접속\n");
+				receive receive=new receive(socket, frame); 
+				receive.start();//받는 쓰레드 실행
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}  finally {
-			if(socket!=null)	
-				socket.close();
-			if(serverSocket!=null)
-				serverSocket.close();			
-		}
-	}	
+			
+		}catch(Exception e) {}
+	}		
 }
-
-
-	class Connect extends Thread{
-			
-		Socket socket;
-		InetAddress inet;
-		String ip;
-		ServerFrame frame;
+//받는 쓰레드
+	class receive extends Thread{
+	//소켓을 받자.
+		Socket socket=null;
+		ServerFrame frame=null;
+		InputStream is=null;
+		DataInputStream dis=null;
 		
-		public Connect (Socket socket,ServerFrame frame){
-			this.socket=socket;
+		public receive(Socket socket,ServerFrame frame){
+			this.socket=socket; 
 			this.frame=frame;
-		}
-		
-		@Override
-		public void run() {
-			//Vector<ClientVO> vec=new Vector<>();
-			
-			inet=socket.getInetAddress();
-			frame.setText("접속: 이름-"+inet.getHostName()+", 주소-"+inet.getHostAddress());
-			UserThread userThread=new UserThread(socket, inet, frame);
-			userThread.start();
-			if(socket.isClosed())
-				frame.mainText.append("접속종료");
-		}	
-	}
-
-	class UserThread extends Thread{
-		ServerFrame frame;
-		Socket socket;
-		InetAddress inet;
-		InputStream is;
-		DataInputStream dis;
-		String readData;
-		Vector<ClientVO> ipVec=new Vector<>();
-		
-		public UserThread(Socket socket, InetAddress inet,ServerFrame frame) {
-			this.socket=socket;
-			this.inet=inet;
-			this.frame=frame;
-			ClientVO vo=new ClientVO(socket, inet);
-			ipVec.add(vo);
-		}
-		
-		@Override
-		public void run() {	
-			
 			try {
 				is=socket.getInputStream();
 				dis=new DataInputStream(is);
-				
-				while(true) {
-				readData=dis.readUTF();
-						send(readData);
-				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
-		public void recieve(InetAddress inet) {
-			
-		}
-		public void send(String readData) {
-			Socket sendSocket=null;
-			String stData[]=new String[2];
-			StringTokenizer st=new StringTokenizer(readData,"-");
-			InetAddress inet=null;
-			ClientVO vo=new ClientVO();
-			
-			while(st.hasMoreTokens());{
-					int count=st.countTokens();
-					System.out.println(count);
-					stData[count]=st.nextToken();
-					System.out.println(stData[count]);
+		}//생성자 끝
+		@Override
+		public void run() {
+			try {//읽어온다음에 값을읽어서 텍스트필드로 나타낸뒤 센드로보내자
+				while(true){  //계속읽어야하기떄문에 무한반복문
+				String data=dis.readUTF();
+				InetAddress inet=socket.getInetAddress();
+				//값을나누는 부분 받는사람ip와 내용
+				String spData[]=data.split("-");
+				//중간에 뿌려주기
+				frame.mainText.append(inet.getHostAddress()+">"+spData[1]+">"+spData[0]+"\n");
 				}
-			
-			for(int i=0;i<ipVec.size();i++) {
-				vo=ipVec.get(i);  
-				inet=vo.getInet();
-				if(stData[0].equals(inet.getHostAddress())) { 
-				try {
-					sendSocket=vo.getSocket();
-					OutputStream os=sendSocket.getOutputStream();
-					DataOutputStream dos=new DataOutputStream(os);
-					dos.writeUTF(inet.getHostAddress()+"-"+stData[1]);
-					frame.setText(inet.getHostAddress()+">"+stData[1]+">"+stData[0]);
-					dos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
-				}}
+				e.printStackTrace();
 			}
+		}
+		
+		
+	}
+	//보내는 쓰레드
+	class send extends Thread{
+		Socket socket=null;
+		ServerFrame frame=null;
+		String spData[]=null;
+		OutputStream os=null;
+		DataOutputStream dos=null;
+		//보내는사람 소켓 데이타 받기
+		public send(Socket socket, ServerFrame frame,String spData[]){
+			this.socket=socket; 
+			this.frame=frame; 
+			this.spData=spData;//받는사람ip[0]와 내용[1]
+		}
+		@Override
+		public void run() {
 			
 			
 		}
+		
+		
 	}
-	

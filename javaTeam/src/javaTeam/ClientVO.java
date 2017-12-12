@@ -5,23 +5,14 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class ClientVO {
-	
+		//소켓을 받는 것
 		private Socket socket=new Socket();
-		private InetAddress inet=null;
-		
-		
-		public ClientVO(Socket socket,InetAddress inet) {
+				
+		public ClientVO(Socket socket) {
 			this.socket=socket;
-			this.inet=inet;
 		}
-		public ClientVO() {
-		}
+		public ClientVO() {}
 		public Socket getSocket() {
 			return socket;
-		}
-		public InetAddress getInet() {
-			return inet;
-		}
-		
-		
+		}		
 }
