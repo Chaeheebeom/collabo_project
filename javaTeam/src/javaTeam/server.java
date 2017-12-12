@@ -37,7 +37,7 @@ public class server  {
 		Socket socket = null;
 		ServerSocket serverSocket =null;
 		try {
-			frame.mainText.setText("Á¢¼Ó´ë±âÁß...\n");
+			frame.mainText.setText("ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½ï¿½...\n");
 			serverSocket=new ServerSocket(7777);
 			while(true) {
 				socket=serverSocket.accept();
@@ -55,7 +55,7 @@ public class server  {
 	}	
 }
 
-//ÃÖÃÊ Á¢¼ÓÇØ¼­ Á¤º¸¸¦ ¹Ş´Â ºÎºĞ
+//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ş´ï¿½ ï¿½Îºï¿½
 	class Connect extends Thread{
 			
 		Socket socket;
@@ -73,13 +73,13 @@ public class server  {
 			//Vector<ClientVO> vec=new Vector<>();
 			
 			inet=socket.getInetAddress();
-			frame.setText("Á¢¼Ó : ¾ÆÀÌµğ-"+inet.getHostName()+", ÁÖ¼Ò-"+inet.getHostAddress()+"\n");
+			frame.setText("ì ‘ì†: ì´ë¦„-"+inet.getHostName()+", ì£¼ì†Œ-"+inet.getHostAddress()+"\n");
 			UserThread userThread=new UserThread(socket, inet, frame);
 			userThread.start();
-			//À¯Àú¾²·¹µå ½ÃÀÛ
+			
 		}	
 	}
-	//½ÇÁúÀûÀÎ ÀÔÃâ·Â ºÎºĞ
+
 	class UserThread extends Thread{
 		ServerFrame frame;
 		Socket socket;
@@ -133,17 +133,17 @@ public class server  {
 			for(int i=0;i<ipVec.size();i++) {
 				vo=ipVec.get(i);  
 				inet=vo.getInet();
-				if(stData[0].equals(inet.getHostAddress())) { //¹Ş´Â»ç¶÷ ipÁÖ¼Ò stdata º¸³»´Â»ç¶÷¤¸¼Òinet
+				if(stData[0].equals(inet.getHostAddress())) { 
 				try {
 					sendSocket=vo.getSocket();
 					OutputStream os=sendSocket.getOutputStream();
 					DataOutputStream dos=new DataOutputStream(os);
-					dos.writeUTF(inet.getHostAddress()+">"+stData[1]);
+					dos.writeUTF(inet.getHostAddress()+"-"+stData[1]);
 					frame.setText(inet.getHostAddress()+">"+stData[1]+">"+stData[0]);
 					dos.close();
 				} catch (IOException e) {
 					e.printStackTrace();
-				}}//if¹®ÀÇ ³¡
+				}}
 			}
 			
 			

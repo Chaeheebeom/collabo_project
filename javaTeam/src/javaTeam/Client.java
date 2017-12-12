@@ -1,6 +1,8 @@
 package javaTeam;
 
-	import java.io.DataInputStream;
+	import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
 	import java.io.DataOutputStream;
 	import java.io.IOException;
 	import java.io.InputStream;
@@ -28,7 +30,7 @@ import java.util.StringTokenizer;
 				ip=inet.getAddress();
 				
 				if(socket.isConnected())
-					frame.mainText.append("¡¢º”µ«æ˙¿Ω\n");
+					frame.mainText.append("Ï†ëÏÜçÏ§ë...\n");
 				ClientThread userThread=new ClientThread(socket, ip,frame);
 				userThread.start();
 				sendThread sendThread=new sendThread(socket, frame);
@@ -97,12 +99,17 @@ import java.util.StringTokenizer;
 		
 		@Override
 		public void run() {
-			
+			frame.btnSend.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					frame.btnSend.getText();
+					dos.writeUTF(data);
+				}
+			});
 		}
 		
-		public void sendms() {
-			
-		}
+	
 		
 		
 	}
