@@ -6,6 +6,8 @@ public class helloworld {
 		System.out.println("¤¾¤·");
 		
 		System.out.println("adasdssad");
+		
+		System.out.println("zzzz");
 	}
 
 }
