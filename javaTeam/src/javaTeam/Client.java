@@ -31,6 +31,8 @@ import java.util.StringTokenizer;
 					frame.mainText.append("접속되었음\n");
 				ClientThread userThread=new ClientThread(socket, ip,frame);
 				userThread.start();
+				sendThread sendThread=new sendThread(socket, frame);
+				sendThread.start();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -67,7 +69,8 @@ import java.util.StringTokenizer;
 						stData[count]=st.nextToken();
 						System.out.println(stData[count]);
 					}
-				frame.mainText.append(stData[1]);}
+				frame.mainText.append(stData[0]+">"+stData[1]);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -95,18 +98,11 @@ import java.util.StringTokenizer;
 		@Override
 		public void run() {
 			
-			Scanner scan=new Scanner(System.in);
-			while(true) {
-				String str=scan.next();
-				try {
-					dos.writeUTF(str);
-					dos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		
+		public void sendms() {
+			
+		}
 		
 		
 	}
