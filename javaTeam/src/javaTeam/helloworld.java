@@ -9,6 +9,7 @@ public class helloworld {
 		
 		System.out.println("zzzz");
 	
+		System.out.println("asdasdasd");
 	
 	}
 
