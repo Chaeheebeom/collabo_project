@@ -14,10 +14,10 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
-public class ClientFrame extends JFrame implements ActionListener{
+public class ClientFrame extends JFrame{
 
 	private JPanel contentPane;
-	private JTextField textField;
+	JTextField textField;
 	JButton btnSend;
 	JTextArea mainText;
 	public ClientFrame() {
@@ -49,11 +49,8 @@ public class ClientFrame extends JFrame implements ActionListener{
 		
 		JLabel lblNewLabel = new JLabel("Client");
 		panel_1.add(lblNewLabel);
-		btnSend.addActionListener(this);
+
 	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String sendData=textField.getText();
-	}
+	
 
 }

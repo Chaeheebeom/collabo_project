@@ -41,8 +41,10 @@ public class server  {
 			serverSocket=new ServerSocket(7777);
 			while(true) {
 				socket=serverSocket.accept();
+				if(socket.isConnected()) {
 				Connect con=new Connect(socket,frame);
 				con.start();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -73,10 +75,11 @@ public class server  {
 			//Vector<ClientVO> vec=new Vector<>();
 			
 			inet=socket.getInetAddress();
-			frame.setText("접속: 이름-"+inet.getHostName()+", 주소-"+inet.getHostAddress()+"\n");
+			frame.setText("접속: 이름-"+inet.getHostName()+", 주소-"+inet.getHostAddress());
 			UserThread userThread=new UserThread(socket, inet, frame);
 			userThread.start();
-			
+			if(socket.isClosed())
+				frame.mainText.append("접속종료");
 		}	
 	}
 
@@ -107,7 +110,6 @@ public class server  {
 				while(true) {
 				readData=dis.readUTF();
 						send(readData);
-					dis.close();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

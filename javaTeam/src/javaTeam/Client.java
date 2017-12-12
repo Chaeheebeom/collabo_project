@@ -55,7 +55,7 @@ import java.util.StringTokenizer;
 		
 		@Override
 		public void run() {
-			try {
+			try {//받는부분
 				while(true) {
 				is=socket.getInputStream();
 				dis=new DataInputStream(is);
@@ -103,12 +103,13 @@ import java.util.StringTokenizer;
 				
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					String data=frame.btnSend.getText();
+					String data=frame.textField.getText();
 					try {
 						dos.writeUTF(data);
 					} catch (IOException e1) {
 						e1.printStackTrace();
-					}
+					}frame.textField.setText("");
+					
 				}
 			});
 		}
