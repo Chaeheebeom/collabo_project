@@ -1,26 +1,28 @@
-package project;
+package javaTeam;
 
 public class LoginVO {
-	private int idx;
+	private int prcode;
 	private String id;
 	private String pwd;
 	private String name;
-	private String phonnum;
+	private String phonenum;
 	private String gender;
 	
-	public LoginVO() {
+	public LoginVO(String id,String pwd,String name,String phonenum,String gender) {
 		super();	
 		this.id = id;
 		this.pwd = pwd;
 		this.name = name;
-		this.phonnum = phonnum;
+		this.phonenum = phonenum;
 		this.gender = gender;
 	}
-	public int getIdx() {
-		return idx;
+	public LoginVO() {}
+	
+	public int getPrcode() {
+		return prcode;
 	}
-	public void setIdx(int idx) {
-		this.idx = idx;
+	public void setPrcode(int prcode) {
+		this.prcode = prcode;
 	}
 	public String getId() {
 		return id;
@@ -41,10 +43,10 @@ public class LoginVO {
 		this.name = name;
 	}
 	public String getPhonnum() {
-		return phonnum;
+		return phonenum;
 	}
 	public void setPhonnum(String phonnum) {
-		this.phonnum = phonnum;
+		this.phonenum = phonnum;
 	}
 	public String getGender() {
 		return gender;

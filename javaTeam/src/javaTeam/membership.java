@@ -1,4 +1,4 @@
-package project;
+package javaTeam;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -118,16 +118,16 @@ public class membership extends JFrame implements ActionListener{
 				for(int i=0;i<=vec.size();i++) {
 					vo=vec.get(i);
 					if(vo.getId().equals(ID)) {
-						JOptionPane.showInputDialog(this, "Áßº¹µÈ ¾ÆÀÌµğÀÔ´Ï´Ù.");
+						JOptionPane.showInputDialog(this, "ì¤‘ë³µëœ ì•„ì´ë””ì…ë‹ˆë‹¤.");
 						
 					}else {
-						JOptionPane.showInputDialog(this, "»ç¿ë °¡´ÉÇÑ ¾ÆÀÌµğÀÔ´Ï´Ù.");
+						JOptionPane.showInputDialog(this, "ì‚¬ìš©ê°€ëŠ¥í•œ ì•„ì´ë””ì…ë‹ˆë‹¤.");
 					}
 				}
 				
 			}
 		});
-		btnNewButton.setFont(new Font("±¼¸²", Font.BOLD, 12));
+		btnNewButton.setFont(new Font("ï¿½ï¿½ï¿½ï¿½", Font.BOLD, 12));
 		panel_3.add(btnNewButton);
 		
 		btnConfirm.addActionListener(this);
@@ -163,20 +163,21 @@ public class membership extends JFrame implements ActionListener{
 		String name=textName.getText();
 		String phonnum=textNum.getText();		
 		if(id==null) {
-			JOptionPane.showMessageDialog(this, "¾ÆÀÌµğ¸¦ ÀÔ·ÂÇÏ¼¼¿ä");			
+			JOptionPane.showMessageDialog(this, "ì•„ì´ë””ë¥¼ ì…ë ¥í•˜ì„¸ìš”");			
 		}else if(pwd==null) {
-			JOptionPane.showMessageDialog(this, "ºñ¹Ğ¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä");
+			JOptionPane.showMessageDialog(this, "ë¹„ë°€ë²ˆí˜¸ë¥¼ ì…ë ¥í•˜ì„¸ìš”");
 		}else if(name==null) {
-			JOptionPane.showMessageDialog(this, "ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä");
+			JOptionPane.showMessageDialog(this, "ì´ë¦„ì„ ì…ë ¥í•˜ì„¸ìš”");
 		}else if(phonnum==null) {
-			JOptionPane.showMessageDialog(this, "ÀüÈ­¹øÈ£¸¦ ÀÔ·ÂÇÏ¼¼¿ä");
+			JOptionPane.showMessageDialog(this, "ì „í™”ë²ˆí˜¸ë¥¼ ì…ë ¥í•˜ì„¸ìš”");
 		}
 		LoginDAO dao=new LoginDAO();
 		int result=dao.login_Insert(id,pwd,name,phonnum,gender);
 		if(result>0) {
-			JOptionPane.showMessageDialog(this, "È¸¿øÀ¸·Î °¡ÀÔµÇ¼Ì½À´Ï´Ù.");			
+			JOptionPane.showMessageDialog(this, "íšŒì›ìœ¼ë¡œ ê°€ì…ë˜ì…¨ìŠµë‹ˆë‹¤.");	
+			dispose();
 		}else {
-			JOptionPane.showMessageDialog(this, "È¸¿øµî·Ï½ÇÆĞ");
+			JOptionPane.showMessageDialog(this, "íšŒì›ë“±ë¡ì‹¤íŒ¨");
 		}
 		}
 			

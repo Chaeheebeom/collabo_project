@@ -1,4 +1,4 @@
-package project;
+package javaTeam;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,22 +8,19 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 public class LoginDAO {
-
+	//ì… ì¶œë ¥ ê¸°íƒ€ë“±ë“±
 	public Connection getConnection(){
 		Connection con=null;
 		try {
-			//Å¬·¡½º ·Îµå
 			Class.forName("com.mysql.jdbc.Driver");
-			//µå¶óÀÌ¹ö·Îµå
 			String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
-			//Ä¿³Ø¼Ç ¾ò¾î¿À±â
 			con=DriverManager.getConnection(url,"root","12345");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
 		return con;
 	}
-	//ÀÚ¿ø ÇØÁ¦
+	
 	public void close(Connection con,PreparedStatement pstmt,ResultSet rs) {
 		try {
 			if(rs!=null)
@@ -46,11 +43,11 @@ public class LoginDAO {
 			e.printStackTrace();
 		}
 	}
-	//È¸¿ø°¡ÀÔ
-	public int login_Insert(String id, String pwd, String name, String phonnum,String gender) {
+	//íšŒì›ê°€ì…ì„ í•˜ëŠ”ë¶€ë¶„
+	public int login_Insert(String id, String pwd, String name, String phonenum,String gender) {
 		PreparedStatement pstmt=null;
 		Connection con=null;
-		String sql="insert into loginTBL(id,pwd,name,phonnum,gender) values(?,?,?,?,?)";
+		String sql="insert into loginTBL(id,pwd,name,phonenum,gender) values(?,?,?,?,?)";
 		int result=0;
 		try {
 			con = getConnection();
@@ -58,7 +55,7 @@ public class LoginDAO {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pwd);
 			pstmt.setString(3, name);
-			pstmt.setString(4, phonnum);
+			pstmt.setString(4, phonenum);
 			pstmt.setString(5, gender);
 			result=pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -68,7 +65,7 @@ public class LoginDAO {
 		}
 		return result;
 	}
-	//ÀüÃ¼Á¶È¸
+	//ìœ ì €ì •ë³´ë¥¼ ë°›ì•„ì˜¤ëŠ”ë¶€ë¶„
 	public Vector<LoginVO> userlist() {
 		Connection con=getConnection();
 		PreparedStatement pstmt =null;
@@ -83,7 +80,7 @@ public class LoginDAO {
 				String id =rs.getString(1);
 				String pwd=rs.getString(2);
 				String name=rs.getString(3);
-				String phonnum=rs.getString(4);
+				String phonenum=rs.getString(4);
 				String gender=rs.getString(5);
 				LoginVO vo=new LoginVO();
 				vec.add(vo);

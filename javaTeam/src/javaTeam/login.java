@@ -1,4 +1,4 @@
-package project;
+package javaTeam;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -62,7 +62,7 @@ public class login extends JFrame implements ActionListener{
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JLabel lblNewLabel = new JLabel("\uC544\uC774\uB514");
-		lblNewLabel.setFont(new Font("±¼¸²", Font.BOLD, 12));
+		lblNewLabel.setFont(new Font("ï¿½ï¿½ï¿½ï¿½", Font.BOLD, 12));
 		panel_1.add(lblNewLabel);
 		
 		txtid = new JTextField();
@@ -70,7 +70,7 @@ public class login extends JFrame implements ActionListener{
 		panel_1.add(txtid);
 		
 		JLabel label_1 = new JLabel("\uBE44\uBC00\uBC88\uD638");
-		label_1.setFont(new Font("±¼¸²", Font.BOLD, 12));
+		label_1.setFont(new Font("ï¿½ï¿½ï¿½ï¿½", Font.BOLD, 12));
 		panel_1.add(label_1);
 		
 		txtpwd = new JTextField();

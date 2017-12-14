@@ -1,4 +1,4 @@
-package project;
+package javaTeam;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -42,7 +42,7 @@ public class Find extends JFrame {
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JLabel lblNewLabel_1 = new JLabel("\uC544\uC774\uB514 \uCC3E\uAE30");
-		lblNewLabel_1.setFont(new Font("±¼¸²", Font.BOLD, 12));
+		lblNewLabel_1.setFont(new Font("ï¿½ï¿½ï¿½ï¿½", Font.BOLD, 12));
 		panel_1.add(lblNewLabel_1);
 		
 		JLabel label = new JLabel("");
@@ -75,7 +75,7 @@ public class Find extends JFrame {
 		panel_1.add(lblNewLabel_5);
 		
 		JLabel label_1 = new JLabel("\uBE44\uBC00\uBC88\uD638 \uCC3E\uAE30");
-		label_1.setFont(new Font("±¼¸²", Font.BOLD, 12));
+		label_1.setFont(new Font("ï¿½ï¿½ï¿½ï¿½", Font.BOLD, 12));
 		panel_1.add(label_1);
 		
 		JLabel label_2 = new JLabel("");
