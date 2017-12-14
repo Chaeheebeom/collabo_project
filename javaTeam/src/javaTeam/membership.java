@@ -13,6 +13,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Vector;
 
 import javax.swing.JRadioButton;
@@ -21,8 +23,8 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 
-public class membership extends JFrame implements ActionListener{
-
+public class membership extends JFrame implements ActionListener{	
+	
 	private JPanel contentPane;
 	private JTextField textID;
 	private JTextField textPWD;
@@ -30,6 +32,7 @@ public class membership extends JFrame implements ActionListener{
 	private JTextField textNum;
 	private JButton btnConfirm, btnCancle;
 	private JRadioButton rdoman, rdogirl;
+	private JLabel idlabel ;
 	ButtonGroup gen;
 	String gender=null;
 	LoginDAO dao=new LoginDAO();
@@ -50,7 +53,7 @@ public class membership extends JFrame implements ActionListener{
 		
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
+		panel_1.setLayout(new GridLayout(0, 3, 0, 0));
 		
 		JLabel lblNewLabel = new JLabel("\uC544\uC774\uB514");
 		panel_1.add(lblNewLabel);
@@ -59,12 +62,31 @@ public class membership extends JFrame implements ActionListener{
 		panel_1.add(textID);
 		textID.setColumns(10);
 		
+		textID.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyTyped(KeyEvent e) {
+				String id=textID.getText();
+				if(id.length()>15 || id.length()<4) {
+					idlabel.setText("아이디는 4글자 이상 15글자 이하 여야합니다.");
+				}else if(id.length()<=15 || id.length()>=4) {
+					idlabel.setText("");
+				}
+			}
+		});
+		
+		idlabel = new JLabel("");
+		panel_1.add(idlabel);
+		
 		JLabel lblNewLabel_1 = new JLabel("\uBE44\uBC00\uBC88\uD638");
 		panel_1.add(lblNewLabel_1);
 		
 		textPWD = new JTextField();
 		panel_1.add(textPWD);
-		textPWD.setColumns(10);
+		textPWD.setColumns(20);
+		
+		JLabel lblNewLabel_5 = new JLabel("");
+		panel_1.add(lblNewLabel_5);
 		
 		JLabel label = new JLabel("\uC774\uB984");
 		panel_1.add(label);
@@ -73,12 +95,18 @@ public class membership extends JFrame implements ActionListener{
 		textName.setColumns(10);
 		panel_1.add(textName);
 		
+		JLabel lblNewLabel_6 = new JLabel("");
+		panel_1.add(lblNewLabel_6);
+		
 		JLabel label_1 = new JLabel("\uC804\uD654\uBC88\uD638");
 		panel_1.add(label_1);
 		
 		textNum = new JTextField();
 		textNum.setColumns(10);
 		panel_1.add(textNum);
+		
+		JLabel lblNewLabel_7 = new JLabel("");
+		panel_1.add(lblNewLabel_7);
 		
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.SOUTH);
@@ -108,27 +136,26 @@ public class membership extends JFrame implements ActionListener{
 		JPanel panel_3 = new JPanel();
 		contentPane.add(panel_3, BorderLayout.EAST);
 		
-		JButton btnNewButton = new JButton("\uC911\uBCF5\uD655\uC778");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnOverlap = new JButton("중복확인");//확인하는부분
+		btnOverlap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Vector<LoginVO> vec =new Vector<>();
-				vec=dao.userlist();
-				LoginVO vo=new LoginVO();
-				String ID=textID.getText();
-				for(int i=0;i<=vec.size();i++) {
-					vo=vec.get(i);
-					if(vo.getId().equals(ID)) {
-						JOptionPane.showInputDialog(this, "중복된 아이디입니다.");
-						
+				Vector<String> vec =new Vector<>();
+				LoginDAO dao=new LoginDAO();
+				vec=dao.getId();//id리스트를 받아오기
+				String ID=textID.getText(); //가입하고자하는 아이디
+				for(int i=0;i<=vec.size();i++) {					
+					String dbID=vec.get(i);//DB에있는아이디
+					if(ID.equals(dbID)) { //db에있는 아이디랑 가입하고자하는 아이디랑 비교
+						textID.selectAll();
 					}else {
-						JOptionPane.showInputDialog(this, "사용가능한 아이디입니다.");
+	
 					}
 				}
 				
 			}
 		});
-		btnNewButton.setFont(new Font("����", Font.BOLD, 12));
-		panel_3.add(btnNewButton);
+		btnOverlap.setFont(new Font("����", Font.BOLD, 12));
+		panel_3.add(btnOverlap);
 		
 		btnConfirm.addActionListener(this);
 		btnCancle.addActionListener(this);
@@ -149,8 +176,6 @@ public class membership extends JFrame implements ActionListener{
 		gen = new ButtonGroup();
 		gen.add(rdoman);
 		gen.add(rdogirl);
-		
-		
 	}
 
 	@Override
@@ -161,18 +186,15 @@ public class membership extends JFrame implements ActionListener{
 		String id=textID.getText();
 		String pwd=textPWD.getText();
 		String name=textName.getText();
-		String phonnum=textNum.getText();		
-		if(id==null) {
-			JOptionPane.showMessageDialog(this, "아이디를 입력하세요");			
-		}else if(pwd==null) {
-			JOptionPane.showMessageDialog(this, "비밀번호를 입력하세요");
-		}else if(name==null) {
-			JOptionPane.showMessageDialog(this, "이름을 입력하세요");
-		}else if(phonnum==null) {
-			JOptionPane.showMessageDialog(this, "전화번호를 입력하세요");
+		String phonenum=textNum.getText();		
+		if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum.equals(null)) {
+			JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");			
+		}else if(id.length()>15 || id.length()<4) {
+			JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
 		}
+		
 		LoginDAO dao=new LoginDAO();
-		int result=dao.login_Insert(id,pwd,name,phonnum,gender);
+		int result=dao.login_Insert(id,pwd,name,phonenum,gender);
 		if(result>0) {
 			JOptionPane.showMessageDialog(this, "회원으로 가입되셨습니다.");	
 			dispose();
