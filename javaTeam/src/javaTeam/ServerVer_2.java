@@ -89,8 +89,9 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 		
 		//서버시작
 		void startServer() {
-			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
+			//executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
 			//ExecutorService 객체를 얻을려면 Executors.newFixedThreadPool 사용 Runtime.getRuntime().availableProcessors()==cpu코어수 만큼 스레드 생성
+			executorService = Executors.newFixedThreadPool(10);
 			try {
 				serverSocket=new ServerSocket(); //객체생성
 				serverSocket.bind(new InetSocketAddress(5001)); //5001번포트와 연결
@@ -107,7 +108,8 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 					while(true) {
 						try {
 							Socket socket=serverSocket.accept(); //접속
-							String message = "접속 : "+socket.getRemoteSocketAddress();
+							String message = "접속 : "+socket.getRemoteSocketAddress()
+							+Thread.currentThread().getName();
 							mainText.append(message+"\n");//메인텍스트에 뿌려주기
 							Client client=new Client(socket);//클라이언트객체생성
 							connections.add(client);//벡터에저장
@@ -160,8 +162,8 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 								int readByte=is.read(byteArr);//입력받는부분
 								if(readByte==-1) {throw new IOException();}//예외처리
 								String message=socket.getRemoteSocketAddress()+"에서 요청처리함";
-								mainText.append("message\n");//메인창에 띄우기
 								String Data=new String(byteArr, 0, readByte,"UTF-8");//보내기위환 변환처리
+								mainText.append(message+"-내용: "+Data+"\n");//메인창에 띄우기
 								for(Client client: connections) {client.send(Data);}//보내는부분
 										}
 						}catch(Exception e) {
@@ -187,13 +189,14 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 							OutputStream os=socket.getOutputStream(); 
 							os.write(byteArr); //받아서 보내기
 							os.flush(); //메모리풀어주기
-						}catch(Exception e) {}
-						try {
-							String message="send통신안됨 : "+socket.getRemoteSocketAddress()+"\n";
-							mainText.append(message);
-							connections.remove(Client.this);
-							socket.close();
-						}catch(Exception e) {}
+						}catch(Exception e) {
+							try {
+								String message="send통신안됨 : "+socket.getRemoteSocketAddress()+"\n";
+								mainText.append(message);
+								connections.remove(Client.this);
+								socket.close();
+							}catch(Exception e2) {}
+						}
 					}
 				};
 				executorService.submit(runnable);

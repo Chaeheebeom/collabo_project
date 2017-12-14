@@ -125,20 +125,21 @@ public class ClientVer_2 extends JFrame implements ActionListener {
 	}
 	//서버에서 보낸것을 받는부분
 	void receive() {
+				
 		while(true) {
-			try {
-				byte[] byteArr =new byte[100];
-				InputStream is=socket.getInputStream();
-				int readByte=is.read(byteArr); //값을 받는부분
-				if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
-				String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
-				mainText.append("상대방"+data+"\n");
-			}catch(Exception e) {
-				mainText.append("클라reecive안됨\n");
-				stopClient();
-				break;
-			}
-		}
+					try {
+						byte[] byteArr =new byte[100];
+						InputStream is=socket.getInputStream();
+						int readByte=is.read(byteArr); //값을 받는부분
+						if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
+						String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
+						mainText.append("상대방"+data+"\n");
+					}catch(Exception e) {e.printStackTrace();
+						mainText.append("클라reecive안됨\n");
+						stopClient();
+						break;
+					}
+				}
 	}
 	//서버에 보내는 부분
 	void send(String data) {
