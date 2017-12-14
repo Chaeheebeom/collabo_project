@@ -44,7 +44,7 @@ public class LoginDAO {
 		}
 	}
 	//회원가입을 하는부분
-	public int login_Insert(String id, String pwd, String name, String phonenum,String gender) {
+	public int login_Insert(String id, String pwd, String name, int phonenum,String gender) {
 		PreparedStatement pstmt=null;
 		Connection con=null;
 		String sql="insert into loginTBL(id,pwd,name,phonenum,gender) values(?,?,?,?,?)";
@@ -55,7 +55,7 @@ public class LoginDAO {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pwd);
 			pstmt.setString(3, name);
-			pstmt.setString(4, phonenum);
+			pstmt.setInt(4, phonenum);
 			pstmt.setString(5, gender);
 			result=pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -92,6 +92,30 @@ public class LoginDAO {
 		}
 		return vec;
 	}
+	//아이디를 받아오는부분
+	public Vector<String> getId() {
+		Connection con=getConnection();
+		PreparedStatement pstmt =null;
+		ResultSet rs=null;
+		String sql="select * from loginTBL";
+		Vector<String> vec=new Vector<>();
+		try {
+			con = getConnection();
+			pstmt=con.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				String id =rs.getString(2);
+				vec.add(id);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(con,pstmt,rs);
+		}
+		return vec;
+	}
+	
+	
 
 	
 }
