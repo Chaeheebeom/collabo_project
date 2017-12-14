@@ -15,10 +15,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowListener;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import java.awt.Font;
@@ -30,15 +33,15 @@ public class membership extends JFrame implements ActionListener{
 	private JTextField textPWD;
 	private JTextField textName;
 	private JTextField textNum;
-	private JButton btnConfirm, btnCancle;
+	private JButton btnConfirm, btnCancle,btnOverlap;
 	private JRadioButton rdoman, rdogirl;
-	private JLabel idlabel ;
+	private JLabel idLabel,pwLabel,nameLabel,numLabel ;
 	ButtonGroup gen;
 	String gender=null;
 	LoginDAO dao=new LoginDAO();
 	
 	public membership() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);  //x버튼눌렀을때 로그인화면으로가기
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -61,22 +64,43 @@ public class membership extends JFrame implements ActionListener{
 		textID = new JTextField();
 		panel_1.add(textID);
 		textID.setColumns(10);
-		
+		//아이디입력받는부분
 		textID.addKeyListener(new KeyAdapter() {
-			
 			@Override
 			public void keyTyped(KeyEvent e) {
 				String id=textID.getText();
 				if(id.length()>15 || id.length()<4) {
-					idlabel.setText("아이디는 4글자 이상 15글자 이하 여야합니다.");
+					idLabel.setText("아이디는 4글자 이상 15글자 이하 여야합니다.");
 				}else if(id.length()<=15 || id.length()>=4) {
-					idlabel.setText("");
+					idLabel.setText("");
 				}
 			}
 		});
-		
-		idlabel = new JLabel("");
-		panel_1.add(idlabel);
+		//공란일경우 입력하라고 띄워주는 부분
+		/*textName.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(textName.equals(null)) 
+					nameLabel.setText("입력해주세요");
+			}
+		});
+		textNum.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(textNum.equals(null)) 
+					numLabel.setText("입력해주세요");
+			}
+		});
+		textPWD.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(textName.equals(null)) 
+					pwLabel.setText("입력해주세요");
+			}
+		});*/
+	
+		idLabel = new JLabel("");
+		panel_1.add(idLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("\uBE44\uBC00\uBC88\uD638");
 		panel_1.add(lblNewLabel_1);
@@ -85,8 +109,8 @@ public class membership extends JFrame implements ActionListener{
 		panel_1.add(textPWD);
 		textPWD.setColumns(20);
 		
-		JLabel lblNewLabel_5 = new JLabel("");
-		panel_1.add(lblNewLabel_5);
+		pwLabel = new JLabel("");
+		panel_1.add(pwLabel);
 		
 		JLabel label = new JLabel("\uC774\uB984");
 		panel_1.add(label);
@@ -95,8 +119,8 @@ public class membership extends JFrame implements ActionListener{
 		textName.setColumns(10);
 		panel_1.add(textName);
 		
-		JLabel lblNewLabel_6 = new JLabel("");
-		panel_1.add(lblNewLabel_6);
+		nameLabel = new JLabel("");
+		panel_1.add(nameLabel);
 		
 		JLabel label_1 = new JLabel("\uC804\uD654\uBC88\uD638");
 		panel_1.add(label_1);
@@ -105,8 +129,8 @@ public class membership extends JFrame implements ActionListener{
 		textNum.setColumns(10);
 		panel_1.add(textNum);
 		
-		JLabel lblNewLabel_7 = new JLabel("");
-		panel_1.add(lblNewLabel_7);
+		numLabel = new JLabel("");
+		panel_1.add(numLabel);
 		
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.SOUTH);
@@ -136,29 +160,13 @@ public class membership extends JFrame implements ActionListener{
 		JPanel panel_3 = new JPanel();
 		contentPane.add(panel_3, BorderLayout.EAST);
 		
-		JButton btnOverlap = new JButton("중복확인");//확인하는부분
-		btnOverlap.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Vector<String> vec =new Vector<>();
-				LoginDAO dao=new LoginDAO();
-				vec=dao.getId();//id리스트를 받아오기
-				String ID=textID.getText(); //가입하고자하는 아이디
-				for(int i=0;i<=vec.size();i++) {					
-					String dbID=vec.get(i);//DB에있는아이디
-					if(ID.equals(dbID)) { //db에있는 아이디랑 가입하고자하는 아이디랑 비교
-						textID.selectAll();
-					}else {
-	
-					}
-				}
-				
-			}
-		});
-		btnOverlap.setFont(new Font("����", Font.BOLD, 12));
+		btnOverlap = new JButton("중복확인");
+		btnOverlap.addActionListener(this); 
 		panel_3.add(btnOverlap);
 		
 		btnConfirm.addActionListener(this);
 		btnCancle.addActionListener(this);
+		
 		rdoman.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -166,16 +174,11 @@ public class membership extends JFrame implements ActionListener{
 			}
 		});
 		rdogirl.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				gender=rdogirl.getActionCommand();
-				
 			}
 		});
-		gen = new ButtonGroup();
-		gen.add(rdoman);
-		gen.add(rdogirl);
 	}
 
 	@Override
@@ -183,26 +186,56 @@ public class membership extends JFrame implements ActionListener{
 		JButton btn = (JButton)e.getSource();		
 		
 		if(btn==btnConfirm) {		
-		String id=textID.getText();
-		String pwd=textPWD.getText();
-		String name=textName.getText();
-		String phonenum=textNum.getText();		
-		if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum.equals(null)) {
-			JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");			
-		}else if(id.length()>15 || id.length()<4) {
-			JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
-		}
-		
-		LoginDAO dao=new LoginDAO();
-		int result=dao.login_Insert(id,pwd,name,phonenum,gender);
-		if(result>0) {
-			JOptionPane.showMessageDialog(this, "회원으로 가입되셨습니다.");	
+			String id=textID.getText();
+			String pwd=textPWD.getText();
+			String name=textName.getText();
+			String strnum=textNum.getText();	
+			int	phonenum=0;
+			try {
+				phonenum=Integer.parseInt(strnum);  
+					try {
+						if(idOverlap()) {//중복확인
+							idLabel.setText("중복된 아이디입니다.");
+							//빈칸이 있는지 확인하는 부분
+						}else if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum==0 || gender.equals(null)) {
+							JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");	//공란이 있을경우 띄워준다.
+							if(textPWD.equals(null)) {pwLabel.setText("입력해주세요");}
+							else if(textName.equals(null)) {nameLabel.setText("입력해주세요");}
+							else if(textNum.equals(null)) {numLabel.setText("입력해주세요");}
+						}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
+							JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
+						}else {	//위조건에 문제가 없을 경우에 DB에 회원자료 집어넣기
+							int result=dao.login_Insert(id, pwd, name, phonenum, gender);
+							if(result==1) {
+								JOptionPane.showMessageDialog(this, "회원가입 완료");
+								dispose();
+							}
+						}
+					}catch(Exception e3) {JOptionPane.showMessageDialog(this, "성별을 선택해 주세요");}  //gender.equals(null)에대한 예외처리//
+				}catch(ClassCastException cce) {numLabel.setText("숫자만 입력하세요"); //폰번호에 이상한거 들어갔을때 예외처리
+			}
+		}else if(btn==btnOverlap) { //중복확인부분
+			if(idOverlap())
+				idLabel.setText("중복된 아이디입니다.");
+		}else if(btn==btnCancle) {
 			dispose();
-		}else {
-			JOptionPane.showMessageDialog(this, "회원등록실패");
 		}
-		}
-			
-		
+	}
+	
+	public boolean idOverlap() {
+		Vector<String> vec =new Vector<>();
+		try {
+			vec=dao.getId();//id리스트를 받아오기
+			String ID=textID.getText(); //가입하고자하는 아이디
+				for(int i=0;i<=vec.size();i++) {					
+					String dbID=vec.get(i);//DB에있는아이디
+					if(ID.equals(dbID)) { //db에있는 아이디랑 가입하고자하는 아이디랑 비교
+						return true;
+					}
+				}
+		}catch(Exception e2) {idLabel.setText("입력해주세요");}
+		return false;
 	}
 }
+
+
