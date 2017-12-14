@@ -11,20 +11,17 @@ import javax.swing.JTextField;
 import java.awt.GridLayout;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class Find extends JFrame {
-
+	//아이디랑 비밀번호찾기
 	private JPanel contentPane;
-	private JTextField textidName;
-	private JTextField textidNum;
-	private JTextField textpwdName;
-	private JTextField textpwdNum;
-	private JTextField textpwdID;
-
+	private JButton btnIdFind,btnPwFind;
 	
 	public Find() {
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);//x버튼눌렀을때 로그인화면으로가기
 		setTitle("\uC544\uC774\uB514/\uBE44\uBC00\uBC88\uD638 \uCC3E\uAE30");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -41,72 +38,95 @@ public class Find extends JFrame {
 		contentPane.add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		JLabel lblNewLabel_1 = new JLabel("\uC544\uC774\uB514 \uCC3E\uAE30");
-		lblNewLabel_1.setFont(new Font("����", Font.BOLD, 12));
-		panel_1.add(lblNewLabel_1);
+		btnIdFind = new JButton("아이디로 찾기");
+		panel_1.add(btnIdFind);
 		
-		JLabel label = new JLabel("");
-		panel_1.add(label);
-		
-		JLabel lblNewLabel_2 = new JLabel("\uC774\uB984");
-		panel_1.add(lblNewLabel_2);
-		
-		textidName = new JTextField();
-		panel_1.add(textidName);
-		textidName.setColumns(10);
-		
-		JLabel lblNewLabel_3 = new JLabel("\uC804\uD654\uBC88\uD638");
-		panel_1.add(lblNewLabel_3);
-		
-		textidNum = new JTextField();
-		textidNum.setColumns(10);
-		panel_1.add(textidNum);
-		
-		JButton btnfind1 = new JButton("\uCC3E\uAE30");
-		panel_1.add(btnfind1);
-		
-		JButton btncancle1 = new JButton("\uCDE8\uC18C");
-		panel_1.add(btncancle1);
-		
-		JLabel lblNewLabel_4 = new JLabel("");
-		panel_1.add(lblNewLabel_4);
-		
-		JLabel lblNewLabel_5 = new JLabel("");
-		panel_1.add(lblNewLabel_5);
-		
-		JLabel label_1 = new JLabel("\uBE44\uBC00\uBC88\uD638 \uCC3E\uAE30");
-		label_1.setFont(new Font("����", Font.BOLD, 12));
-		panel_1.add(label_1);
-		
-		JLabel label_2 = new JLabel("");
-		panel_1.add(label_2);
-		
-		JLabel label_3 = new JLabel("\uC774\uB984");
-		panel_1.add(label_3);
-		
-		textpwdName = new JTextField();
-		textpwdName.setColumns(10);
-		panel_1.add(textpwdName);
-		
-		JLabel label_5 = new JLabel("\uC544\uC774\uB514");
-		panel_1.add(label_5);
-		
-		textpwdID = new JTextField();
-		textpwdID.setColumns(10);
-		panel_1.add(textpwdID);
-		
-		JLabel label_4 = new JLabel("\uC804\uD654\uBC88\uD638");
-		panel_1.add(label_4);
-		
-		textpwdNum = new JTextField();
-		textpwdNum.setColumns(10);
-		panel_1.add(textpwdNum);
-		
-		JButton btnfind2 = new JButton("\uCC3E\uAE30");
-		panel_1.add(btnfind2);
-		
-		JButton btncancle2 = new JButton("\uCDE8\uC18C");
-		panel_1.add(btncancle2);
+		btnPwFind = new JButton("비밀번호로 찾기");
+		btnPwFind.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panel_1.add(btnPwFind);
+		pack();
+		btnIdFind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindId id=new FindId();
+				id.setVisible(true);
+			}
+		});
+		btnPwFind.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FindPw pw=new FindPw();
+				pw.setVisible(true);
+			}
+		});
 	}
-
+}
+//아이디찾는 것
+class FindId extends JFrame implements ActionListener{
+	private JPanel contentPane;
+	private JButton btnFind,btnCancel;
+	private JLabel mainLabel,nameLabel,numLabel;
+	private JTextField nameText,numText;
+	public FindId() {
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);//x버튼눌렀을때 로그인화면으로가기
+		setTitle("아이디찾기");
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.NORTH);
+		mainLabel=new JLabel("아이디 찾기");
+		panel.add(mainLabel);
+		
+		JPanel centerPanel=new JPanel();
+		centerPanel.setLayout(new GridLayout(0, 2, 0, 0));
+		contentPane.add(centerPanel,BorderLayout.CENTER);		
+		nameLabel=new JLabel("이름");
+		nameText=new JTextField();
+		numLabel=new JLabel("핸드폰번호");
+		numText=new JTextField();
+		centerPanel.add(nameLabel);
+		centerPanel.add(nameText);
+		centerPanel.add(numLabel);
+		centerPanel.add(numText);
+		
+		JPanel southPanel=new JPanel();
+		contentPane.add(southPanel,BorderLayout.SOUTH);
+		btnFind=new JButton("찾기");
+		btnCancel=new JButton("취소");
+		btnFind.addActionListener(this);
+		btnCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose(); //취소버튼 
+			}
+		});
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		//찾기하는 부분 입력된 이름과 핸드폰 번호와 dB에있는것들을 대조하는 것
+		
+	}
+	
+	
+}
+//비밀번호찾는 것 만들어야됨
+class FindPw extends JFrame{
+	private JPanel contentPane;
+	public FindPw() {
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);//x버튼눌렀을때 로그인화면으로가기
+		setTitle("비밀번호찾기");
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+		
+	}
 }
