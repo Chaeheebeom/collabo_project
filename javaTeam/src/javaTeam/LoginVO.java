@@ -5,10 +5,10 @@ public class LoginVO {
 	private String id;
 	private String pwd;
 	private String name;
-	private String phonenum;
+	private int phonenum;
 	private String gender;
 	
-	public LoginVO(String id,String pwd,String name,String phonenum,String gender) {
+	public LoginVO(String id,String pwd,String name,int phonenum,String gender) {
 		super();	
 		this.id = id;
 		this.pwd = pwd;
@@ -16,7 +16,13 @@ public class LoginVO {
 		this.phonenum = phonenum;
 		this.gender = gender;
 	}
+	public LoginVO(String id,String pwd) {
+		super();
+		this.id=id;
+		this.pwd=pwd;
+	}
 	public LoginVO() {}
+	
 	
 	public int getPrcode() {
 		return prcode;
@@ -42,11 +48,11 @@ public class LoginVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getPhonnum() {
+	public int getPhonenum() {
 		return phonenum;
 	}
-	public void setPhonnum(String phonnum) {
-		this.phonenum = phonnum;
+	public void setPhonenum(int phonenum) {
+		this.phonenum = phonenum;
 	}
 	public String getGender() {
 		return gender;

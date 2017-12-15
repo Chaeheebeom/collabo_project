@@ -77,12 +77,13 @@ public class LoginDAO {
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
-				String id =rs.getString(1);
-				String pwd=rs.getString(2);
-				String name=rs.getString(3);
-				String phonenum=rs.getString(4);
-				String gender=rs.getString(5);
-				LoginVO vo=new LoginVO();
+				String prcode =rs.getString(1);
+				String id=rs.getString(2);
+				String pwd=rs.getString(3);
+				String name=rs.getString(4);
+				int phonenum=rs.getInt(5);
+				String gender=rs.getString(6);
+				LoginVO vo=new LoginVO(id, pwd, name,phonenum,gender);
 				vec.add(vo);
 			}
 		} catch (SQLException e) {
@@ -113,8 +114,30 @@ public class LoginDAO {
 			close(con,pstmt,rs);
 		}
 		return vec;
+	}//아이디와 비밀번호를 받아오는부분
+	public Vector<LoginVO> get_pw_id() {
+		Connection con=getConnection();
+		PreparedStatement pstmt =null;
+		ResultSet rs=null;
+		String sql="select * from loginTBL";
+		Vector<LoginVO> vec=new Vector<>();
+		try {
+			con = getConnection();
+			pstmt=con.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			while(rs.next()) {
+				String id=rs.getString(2);
+				String pwd=rs.getString(3);
+				LoginVO vo=new LoginVO(id, pwd);
+				vec.add(vo);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close(con,pstmt,rs);
+		}
+		return vec;
 	}
-	
 	
 
 	
