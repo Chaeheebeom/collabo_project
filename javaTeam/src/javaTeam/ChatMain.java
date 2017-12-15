@@ -1,4 +1,4 @@
-package main;
+package javaTeam;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -22,6 +22,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.awt.Color;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -29,53 +34,34 @@ import javax.swing.event.ListSelectionListener;
 public class ChatMain extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
-	private String[] listStr = {"�¶���  ���μ�  [minseok] (���� �ʹ� �����)","�������� ������  [jiung] (�μ��� �ٺ�)","�¶���  ä���  [heebum] (�ڹ��� ��)"};
-    private JMenuItem Menuexit,Menulogout,Menufind,Menuinfo;
+	private String[] listStr = {"[minseok]","[jiung] ","[heebum]"};
+    private JMenuItem Menuexit,Menulogout,MenuAddFriend,Menuinfo;
 	private FriendFind find=new FriendFind();
 	private Information info=new Information();
     
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					ChatMain frame = new ChatMain();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public ChatMain() {
 		setTitle("OO\uD1A1");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 536, 590);
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		setBounds(100, 100, 300, 590);
 		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBackground(Color.WHITE);
 		setJMenuBar(menuBar);
 		
 		JMenu mnNewMenu = new JMenu("Menu");
-		mnNewMenu.setFont(new Font("���� ����", Font.BOLD, 20));
+		mnNewMenu.setFont(new Font("", Font.BOLD, 20));
 		menuBar.add(mnNewMenu);
 		
-		Menuinfo = new JMenuItem("\uB0B4 \uC815\uBCF4 \uBCF4\uAE30");
+		Menuinfo = new JMenuItem("내 정보 보기");
 		mnNewMenu.add(Menuinfo);
 		
-		Menufind = new JMenuItem("\uCE5C\uAD6C \uCC3E\uAE30");
-		mnNewMenu.add(Menufind);
+		MenuAddFriend = new JMenuItem("친구추가");
+		mnNewMenu.add(MenuAddFriend);
 		
-		Menulogout = new JMenuItem("\uB85C\uADF8 \uC544\uC6C3");
+		Menulogout = new JMenuItem("로그아웃");
 		mnNewMenu.add(Menulogout);
 		
-		Menuexit = new JMenuItem("\uC885\uB8CC");
+		Menuexit = new JMenuItem("종료");
 		mnNewMenu.add(Menuexit);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -97,35 +83,38 @@ public class ChatMain extends JFrame implements ActionListener{
 		JPopupMenu popupMenu = new JPopupMenu();
 		addPopup(list, popupMenu);
 		
-		JMenuItem mntmNewMenuItem_4 = new JMenuItem("\uCE5C\uAD6C \uC815\uBCF4 \uBCF4\uAE30");
-		mntmNewMenuItem_4.setFont(new Font("���� ����", Font.BOLD, 16));
-		popupMenu.add(mntmNewMenuItem_4);
+		JMenuItem mntInfoFriend = new JMenuItem("내 친구 정보보기");
+		mntInfoFriend.setFont(new Font("", Font.BOLD, 16));
+		popupMenu.add(mntInfoFriend);
 		
-		JMenuItem mntmNewMenuItem_5 = new JMenuItem("\uCE5C\uAD6C \uC0AD\uC81C");
-		mntmNewMenuItem_5.setFont(new Font("���� ����", Font.BOLD, 16));
-		popupMenu.add(mntmNewMenuItem_5);
+		JMenuItem mntDelFriend = new JMenuItem("친구 삭제하기");
+		mntDelFriend.setFont(new Font("", Font.BOLD, 16));
+		popupMenu.add(mntDelFriend);
 		
-		JMenuItem mntmNewMenuItem_6 = new JMenuItem("\uCABD\uC9C0 \uBCF4\uB0B4\uAE30");
-		mntmNewMenuItem_6.setFont(new Font("���� ����", Font.BOLD, 16));
-		popupMenu.add(mntmNewMenuItem_6);
+		JMenuItem mntSendMs = new JMenuItem("쪽지 보내기");
+		mntSendMs.setFont(new Font("", Font.BOLD, 16));
+		popupMenu.add(mntSendMs);
 		
-		JMenuItem mntmNewMenuItem_7 = new JMenuItem("\uB300\uD654 \uC2E0\uCCAD");
-		mntmNewMenuItem_7.setFont(new Font("���� ����", Font.BOLD, 16));
-		popupMenu.add(mntmNewMenuItem_7);
+		JMenuItem mntChat = new JMenuItem("대화화기");
+		mntChat.setFont(new Font("", Font.BOLD, 16));
+		popupMenu.add(mntChat);
 		
 		
-		    list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	        list.setListData(listStr); 
-	        list.setFont(new Font("���� ����",Font.BOLD,16));
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	    list.setListData(listStr); 
+	    list.setFont(new Font("���� ���",Font.BOLD,16));
+	    
+	    JPanel panel_2 = new JPanel();
+	    contentPane.add(panel_2, BorderLayout.SOUTH);
 	        
-	        Menuexit.addActionListener(this);
-	        Menuinfo.addActionListener(this);
-	        Menufind.addActionListener(this);
-	        Menulogout.addActionListener(this);
+	    Menuexit.addActionListener(this);
+	    Menuinfo.addActionListener(this);
+	    MenuAddFriend.addActionListener(this);
+	    Menulogout.addActionListener(this);
 	        
-	        
+	    //채팅스레드를 실행시키는 부분
+	    startClient();
 	}
-
 	private static void addPopup(Component component, final JPopupMenu popup) {
 			
 		component.addMouseListener(new MouseAdapter() {
@@ -151,22 +140,93 @@ public class ChatMain extends JFrame implements ActionListener{
 		JMenuItem jm = (JMenuItem) e.getSource();
 		
 		if(jm == Menuexit) {
-			//����
-			System.exit(0);
-		}else if(jm == Menufind) {
-			//ģ�� ã��
+			//종료
+			int result=JOptionPane.showConfirmDialog(this, "종료하시겠습니까?", "프로그램종료", JOptionPane.YES_NO_OPTION);
+				if(result==0) {
+					System.exit(0);
+				}
+		}else if(jm == MenuAddFriend) {
+			//친구추가
 			find.setVisible(true);			
-			
 		}else if(jm == Menuinfo) {
-			//���� ���� 
+			//정보보기
 			info.setVisible(true);
-			
 		}else if(jm == Menulogout) {
-			//�α� �ƿ�
-			
-			
-			
+			//로그아웃
+			stopClient();//채팅스레드닫기
+			dispose();//이창닫기
+			login frame=new login();
+			frame.setVisible(true);//로그인창 띄우기			
 		}
-		
 	}
+	
+	//클라이언트가 실행되는 부분
+		Socket socket;
+		
+		//시작되는 부분
+		void startClient() {
+			Thread thread=new Thread() { //스레드생성
+				@Override
+				public void run() {
+					try {
+						socket = new Socket();
+						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
+						//mainText.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
+					}catch(Exception e) {
+						//mainText.append("서버와 통신안됨\n");
+						if(!socket.isClosed())
+							stopClient();
+						return;
+					}receive(); //서버에서 보낸것 받기
+				} 
+			};
+			thread.start(); //스레드실행
+		}
+		//정지하는 부분
+		void stopClient() {
+			try {
+				//mainText.append("접속종료\n");
+				if(!socket.isClosed() && socket!=null)
+					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
+				//toggleBtn.setText("종료");
+				//toggleBtn.setSelected(false);
+			}catch(Exception e) {}
+		}
+		//서버에서 보낸것을 받는부분
+		void receive() {
+					
+			while(true) {
+						try {
+							byte[] byteArr =new byte[100];
+							InputStream is=socket.getInputStream();
+							int readByte=is.read(byteArr); //값을 받는부분
+							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
+							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
+							//mainText.append("상대방"+data+"\n");
+						}catch(Exception e) {e.printStackTrace();
+							//mainText.append("클라reecive안됨\n");
+							stopClient();
+							break;
+						}
+					}
+		}
+		//서버에 보내는 부분
+		void send(String data) {
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					try {
+						byte byteArr[]=data.getBytes("UTF-8");
+						OutputStream os=socket.getOutputStream();
+						os.write(byteArr);
+						os.flush();
+						//mainText.append("전송완료\n");
+					}catch(Exception e) {
+						//mainText.append("클라send안됨\n");
+						stopClient();
+					}
+				}
+			};thread.start();
+		}
+	
 }
