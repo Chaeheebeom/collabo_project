@@ -13,6 +13,9 @@ import javax.swing.JOptionPane;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import javax.swing.JTextField;
@@ -81,7 +84,15 @@ public class login extends JFrame implements ActionListener{
 		txtpwd.setColumns(10);
 		txtpwd.setEchoChar('*');
 		panel_1.add(txtpwd);
-		
+		txtpwd.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+				if(arg0.getKeyCode()==KeyEvent.VK_ENTER)
+					btnMake.addActionListener(new login());//엔터치면 로그인버튼누른것과 같은효과
+			}
+			
+		});
+	
 		
 		JPanel panel_2 = new JPanel();
 		contentPane.add(panel_2, BorderLayout.SOUTH);
@@ -133,5 +144,6 @@ public class login extends JFrame implements ActionListener{
 		}
 		
 	}
+
 
 }
