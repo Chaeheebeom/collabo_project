@@ -149,8 +149,12 @@ public class Find extends JFrame {
 		}	
 	}
 	//비밀번호찾는 것 만들어야됨
-	class FindPw extends JFrame{
+	class FindPw extends JFrame implements ActionListener{
 		private JPanel contentPane;
+		private JButton btnFind,btnCancel;
+		private JLabel mainLabel,nameLabel,idLabel;
+		private JTextField nameText,idText;
+		
 		public FindPw() {
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);//x버튼눌렀을때 로그인화면으로가기
 			setTitle("비밀번호찾기");
@@ -160,7 +164,64 @@ public class Find extends JFrame {
 			contentPane.setLayout(new BorderLayout(0, 0));
 			setContentPane(contentPane);
 			
+			JPanel panel = new JPanel();
+			contentPane.add(panel, BorderLayout.NORTH);
+			mainLabel=new JLabel("비밀번호 찾기");
+			panel.add(mainLabel);
+			
+			JPanel centerPanel=new JPanel();
+			centerPanel.setLayout(new GridLayout(0, 2, 0, 0));
+			contentPane.add(centerPanel,BorderLayout.CENTER);		
+			nameLabel=new JLabel("이름");
+			nameText=new JTextField();
+			nameText.setColumns(20);
+			idLabel=new JLabel("아이디");
+			idText=new JTextField();
+			idText.setColumns(20);
+			centerPanel.add(nameLabel);
+			centerPanel.add(nameText);
+			centerPanel.add(idLabel);
+			centerPanel.add(idText);
+
+			JPanel southPanel=new JPanel();
+			contentPane.add(southPanel,BorderLayout.SOUTH);
+			btnFind=new JButton("찾기");
+			btnCancel=new JButton("취소");
+			southPanel.add(btnFind);
+			southPanel.add(btnCancel);
+			pack(); //UI구현 끝
+			btnFind.addActionListener(this);
+			btnCancel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dispose(); //취소버튼 
+				}
+			});
 		}
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			//찾기하는 부분 입력된 이름과 핸드폰 번호와 dB에있는것들을 대조하는 것
+			String name=nameText.getText();//입력한 이름
+			String strId=idText.getText();//입력한 핸드폰 번호
+			String pwd=null;
+			
+			LoginDAO dao=new LoginDAO();
+			LoginVO vo=new LoginVO();
+			Vector<LoginVO> vec=new Vector<>();
+			vec=dao.userlist();//DB에서 받아오기
+			for(int i=0;i<vec.size();i++) {
+				vo=vec.get(i);
+					if(vo.getName().equals(name) && vo.getPwd()==pwd) { //비교하는 부분
+						pwd=vo.getPwd();
+						JOptionPane.showMessageDialog(this, "당신의 비밀번호는 : "+pwd+" 입니다");
+						dispose();
+						break;
+					}else {
+						JOptionPane.showMessageDialog(this, "이름 혹은 아이디를 정확히 입력해 주세요");
+						break;
+					}
+			}
+		}	
 	}
 }
 
