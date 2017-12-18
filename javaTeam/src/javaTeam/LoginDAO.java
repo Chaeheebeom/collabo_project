@@ -44,10 +44,10 @@ public class LoginDAO {
 		}
 	}
 	//회원가입을 하는부분
-	public int login_Insert(String id, String pwd, String name, int phonenum,String gender) {
+	public int login_Insert(String id, String pwd, String name,int age, int phonenum,String gender) {
 		PreparedStatement pstmt=null;
 		Connection con=null;
-		String sql="insert into loginTBL(id,pwd,name,phonenum,gender) values(?,?,?,?,?)";
+		String sql="insert into loginTBL(id,pwd,name,age,phonenum,gender) values(?,?,?,?,?,?)";
 		int result=0;
 		try {
 			con = getConnection();
@@ -55,8 +55,9 @@ public class LoginDAO {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pwd);
 			pstmt.setString(3, name);
-			pstmt.setInt(4, phonenum);
-			pstmt.setString(5, gender);
+			pstmt.setInt(4, age);
+			pstmt.setInt(5, phonenum);
+			pstmt.setString(6, gender);
 			result=pstmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -77,13 +78,14 @@ public class LoginDAO {
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			while(rs.next()) {
-				String prcode =rs.getString(1);
+				int prcode =rs.getInt(1);
 				String id=rs.getString(2);
 				String pwd=rs.getString(3);
 				String name=rs.getString(4);
-				int phonenum=rs.getInt(5);
-				String gender=rs.getString(6);
-				LoginVO vo=new LoginVO(id, pwd, name,phonenum,gender);
+				int age=rs.getInt(5);
+				int phonenum=rs.getInt(6);
+				String gender=rs.getString(7);
+				LoginVO vo=new LoginVO(prcode, id, pwd, name,phonenum,gender,age);
 				vec.add(vo);
 			}
 		} catch (SQLException e) {
@@ -93,6 +95,7 @@ public class LoginDAO {
 		}
 		return vec;
 	}
+	
 	//아이디를 받아오는부분
 	public Vector<String> getId() {
 		Connection con=getConnection();

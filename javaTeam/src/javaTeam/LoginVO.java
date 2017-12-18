@@ -7,14 +7,17 @@ public class LoginVO {
 	private String name;
 	private int phonenum;
 	private String gender;
+	private int age;
 	
-	public LoginVO(String id,String pwd,String name,int phonenum,String gender) {
+	public LoginVO(int prcode,String id,String pwd,String name,int phonenum,String gender,int age) {
 		super();	
+		this.prcode=prcode;
 		this.id = id;
 		this.pwd = pwd;
 		this.name = name;
 		this.phonenum = phonenum;
 		this.gender = gender;
+		this.age=age;
 	}
 	public LoginVO(String id,String pwd) {
 		super();
@@ -60,6 +63,7 @@ public class LoginVO {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
+
 	
 	
 

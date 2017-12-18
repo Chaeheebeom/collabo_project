@@ -84,14 +84,7 @@ public class login extends JFrame implements ActionListener{
 		txtpwd.setColumns(10);
 		txtpwd.setEchoChar('*');
 		panel_1.add(txtpwd);
-		txtpwd.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				if(arg0.getKeyCode()==KeyEvent.VK_ENTER)
-					btnMake.addActionListener(new login());//엔터치면 로그인버튼누른것과 같은효과
-			}
-			
-		});
+		txtpwd.addKeyListener(new Enter());
 	
 		
 		JPanel panel_2 = new JPanel();
@@ -116,33 +109,47 @@ public class login extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Vector<LoginVO> vec=new Vector<>();
-		LoginDAO dao=new LoginDAO();
-		LoginVO vo=new LoginVO();
+		
 		JButton btn=(JButton) e.getSource();
 		if(btn==btnMake) {
 			member.setVisible(true);//회원가입			
 		} else if(btn==btnFind) {
 			find.setVisible(true); //아이디,비번찾기
 		} else if(btn==btnLogin) {//로그인구현
-			String id=txtid.getText();
-			char[] pw=txtpwd.getPassword();//입력한 아이디
-			String passwd=new String(pw,0,pw.length); //입력한 비밀번호
-			vec=dao.get_pw_id();
-			for(int i=0;i<vec.size();i++) {
-				vo=vec.get(i); //DB에 있는 것
-					if(vo.getId().equals(id) && vo.getPwd().equals(passwd)) { //비교하기
-						ChatMain frame=new ChatMain();
-						frame.setVisible(true); //메인창 띄우기
-						dispose();//로그인창 닫기
-						break;
-					}else {
-						JOptionPane.showMessageDialog(this, "아이디/비밀번호를 잘못 입력하셨습니다.");
-						break;
-					}
+			login();
+		}
+		
+	}
+	class Enter extends KeyAdapter{
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+				login();
 			}
 		}
 		
+	}
+	public void login() {
+		Vector<LoginVO> vec=new Vector<>();
+		LoginDAO dao=new LoginDAO();
+		LoginVO vo=new LoginVO();
+		String id=txtid.getText();
+		char[] pw=txtpwd.getPassword();//입력한 아이디
+		String passwd=new String(pw,0,pw.length); //입력한 비밀번호
+		vec=dao.get_pw_id();
+		for(int i=0;i<vec.size();i++) {
+			vo=vec.get(i); //DB에 있는 것
+				if(vo.getId().equals(id) && vo.getPwd().equals(passwd)) { //비교하기
+					ChatMain frame=new ChatMain(vo);//내꺼 정보넘기기
+					frame.setVisible(true); //메인창 띄우기
+					dispose();//로그인창 닫기
+					break;
+				}else {
+					JOptionPane.showMessageDialog(this, "아이디/비밀번호를 잘못 입력하셨습니다.");
+					break;
+				}
+		}
 	}
 
 
