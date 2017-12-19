@@ -1,6 +1,7 @@
 package javaTeam;
 
 import java.awt.Frame;
+import java.beans.VetoableChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -33,10 +34,11 @@ public class server  {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Vector<ClientVO> vec=new Vector<>();//접속한 클라이언트정보를 저장할 것(소켓으로 저장)
+		Vector<Socket> vec=new Vector<>();//접속한 클라이언트정보를 저장할 것(소켓으로 저장)
 		ClientVO vo=null;
 		Socket socket = null;
 		ServerSocket serverSocket =null;
+		ClientDAO dao=new ClientDAO();
 		//프레임보여주기
 		ServerFrame frame=new ServerFrame();
 		frame.setVisible(true);
@@ -46,8 +48,8 @@ public class server  {
 			serverSocket=new ServerSocket(7777);
 			while(true) {
 				socket=serverSocket.accept();
-				vo=new ClientVO(socket);
-				vec.add(vo); //접속한 클라이언트 누적.
+				vec.add(socket); //접속한 클라이언트 누적.
+				dao.addConnectuser(vec);//DAO에누적 -아무때나 불러다가 쓸수있기위함
 				InetAddress inet=socket.getInetAddress(); //소켓안에있는 ip주소 inet안에는 호스트의 ip주소 이름 다 있음
 				frame.mainText.append(inet.getHostAddress()+"접속\n");
 				receive receive=new receive(socket, frame); 
@@ -64,7 +66,8 @@ public class server  {
 		ServerFrame frame=null;
 		InputStream is=null;
 		DataInputStream dis=null;
-		
+		Vector<Socket> vec=null;
+		ClientDAO dao=new ClientDAO();
 		public receive(Socket socket,ServerFrame frame){
 			this.socket=socket; 
 			this.frame=frame;
@@ -79,19 +82,32 @@ public class server  {
 		public void run() {
 			try {//읽어온다음에 값을읽어서 텍스트필드로 나타낸뒤 센드로보내자
 				while(true){  //계속읽어야하기떄문에 무한반복문
+					if(socket.isClosed()) {
+						vec.remove(socket);
+						dao.addConnectuser(vec);
+						break;
+					}
 				String data=dis.readUTF();
 				InetAddress inet=socket.getInetAddress();
 				//값을나누는 부분 받는사람ip와 내용
 				String spData[]=data.split("-");
 				//중간에 뿌려주기
 				frame.mainText.append(inet.getHostAddress()+">"+spData[1]+">"+spData[0]+"\n");
+				//
+				send send=new send(socket, frame, spData);
 				}
 				} catch (IOException e) {
 				e.printStackTrace();
+			}finally {
+					try {
+						if(!dis.equals(null))
+						dis.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
-		}
-		
-		
+		}		
 	}
 	//보내는 쓰레드
 	class send extends Thread{
@@ -100,15 +116,35 @@ public class server  {
 		String spData[]=null;
 		OutputStream os=null;
 		DataOutputStream dos=null;
-		//보내는사람 소켓 데이타 받기
+		ClientDAO dao=new ClientDAO();
+		Vector<Socket> vec=new Vector<>();
+		//보내는사람 소켓 데이타 받기 접속한사람 목록
 		public send(Socket socket, ServerFrame frame,String spData[]){
-			this.socket=socket; 
+			this.socket=socket; //보낸사람 소켓
 			this.frame=frame; 
 			this.spData=spData;//받는사람ip[0]와 내용[1]
 		}
 		@Override
 		public void run() {
-			
+			vec=dao.getConnectUser();
+			while(true) {
+				for(int i=0;i<vec.size();i++) {
+					Socket socket=vec.get(i);
+					InetAddress inet=socket.getInetAddress();
+					String hostIp=inet.getHostAddress(); //받는사람Ip
+					if(spData[0].equals(hostIp)) {
+						try {
+							os=socket.getOutputStream();
+							dos=new DataOutputStream(os);
+							dos.writeUTF(spData[0]);
+							dos.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			}
 			
 		}
 		

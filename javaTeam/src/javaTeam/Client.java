@@ -59,19 +59,8 @@ import java.util.StringTokenizer;
 				while(true) {
 				is=socket.getInputStream();
 				dis=new DataInputStream(is);
-				
 				String readData=dis.readUTF();
-				String stData[]=new String[2];
-				StringTokenizer st=new StringTokenizer(readData,"-");
-				InetAddress inet=null;
-				
-				while(st.hasMoreTokens());{
-						int count=st.countTokens();
-						System.out.println(count);
-						stData[count]=st.nextToken();
-						System.out.println(stData[count]);
-					}
-				frame.mainText.append(stData[0]+">"+stData[1]);
+				frame.mainText.append(readData);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

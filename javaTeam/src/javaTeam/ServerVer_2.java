@@ -125,7 +125,7 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 				}
 			};
 			executorService.submit(runnable);  //스레드풀에서처리
-		}
+		}		
 		//서버정지
 		void stopServer()  {
 			Iterator<Client> iterator=connections.iterator(); //반복자 얻어내기

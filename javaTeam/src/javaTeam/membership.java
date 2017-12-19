@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,7 +31,7 @@ public class membership extends JFrame implements ActionListener{
 	
 	private JPanel contentPane;
 	private JTextField textID;
-	private JTextField textPWD;
+	private JPasswordField textPWD;
 	private JTextField textName;
 	private JTextField textNum;
 	private JButton btnConfirm, btnCancle,btnOverlap;
@@ -39,6 +40,9 @@ public class membership extends JFrame implements ActionListener{
 	ButtonGroup gen;
 	String gender=null;
 	LoginDAO dao=new LoginDAO();
+	private JLabel label_2;
+	private JTextField textAge;
+	private JLabel ageLabel;
 	
 	public membership() {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);  //x버튼눌렀을때 로그인화면으로가기
@@ -76,28 +80,7 @@ public class membership extends JFrame implements ActionListener{
 				}
 			}
 		});
-		//공란일경우 입력하라고 띄워주는 부분
-		/*textName.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(textName.equals(null)) 
-					nameLabel.setText("입력해주세요");
-			}
-		});
-		textNum.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(textNum.equals(null)) 
-					numLabel.setText("입력해주세요");
-			}
-		});
-		textPWD.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if(textName.equals(null)) 
-					pwLabel.setText("입력해주세요");
-			}
-		});*/
+		
 	
 		idLabel = new JLabel("");
 		panel_1.add(idLabel);
@@ -105,9 +88,10 @@ public class membership extends JFrame implements ActionListener{
 		JLabel lblNewLabel_1 = new JLabel("\uBE44\uBC00\uBC88\uD638");
 		panel_1.add(lblNewLabel_1);
 		
-		textPWD = new JTextField();
+		textPWD = new JPasswordField();
 		panel_1.add(textPWD);
 		textPWD.setColumns(20);
+		textPWD.setEchoChar('*');
 		
 		pwLabel = new JLabel("");
 		panel_1.add(pwLabel);
@@ -121,6 +105,16 @@ public class membership extends JFrame implements ActionListener{
 		
 		nameLabel = new JLabel("");
 		panel_1.add(nameLabel);
+		
+		label_2 = new JLabel("나이");
+		panel_1.add(label_2);
+		
+		textAge = new JTextField();
+		textAge.setColumns(10);
+		panel_1.add(textAge);
+		
+		ageLabel = new JLabel("");
+		panel_1.add(ageLabel);
 		
 		JLabel label_1 = new JLabel("\uC804\uD654\uBC88\uD638");
 		panel_1.add(label_1);
@@ -187,17 +181,24 @@ public class membership extends JFrame implements ActionListener{
 		
 		if(btn==btnConfirm) {		
 			String id=textID.getText();
-			String pwd=textPWD.getText();
+			char[] password=textPWD.getPassword();
+			String pwd=new String(password, 0, password.length);
 			String name=textName.getText();
-			String strnum=textNum.getText();	
+			String strNum=textNum.getText();
+			String strAge=textAge.getText();
+			int age=0;
 			int	phonenum=0;
 			try {
-				phonenum=Integer.parseInt(strnum);  
+				age=Integer.parseInt(strAge);
+				phonenum=Integer.parseInt(strNum);  
 					try {
 						if(idOverlap()) {//중복확인
 							idLabel.setText("중복된 아이디입니다.");
 							//빈칸이 있는지 확인하는 부분
-						}else if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum==0 || gender.equals(null)) {
+						}else if(age<0){
+							JOptionPane.showMessageDialog(this,"나이를 다시 입력해주세요");
+							ageLabel.setText("제대로 입력해 주세요");
+						}else if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum==0  || gender.equals(null)) {
 							JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");	//공란이 있을경우 띄워준다.
 							if(textPWD.equals(null)) {pwLabel.setText("입력해주세요");}
 							else if(textName.equals(null)) {nameLabel.setText("입력해주세요");}
@@ -205,7 +206,7 @@ public class membership extends JFrame implements ActionListener{
 						}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
 							JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
 						}else {	//위조건에 문제가 없을 경우에 DB에 회원자료 집어넣기
-							int result=dao.login_Insert(id, pwd, name, phonenum, gender);
+							int result=dao.login_Insert(id, pwd, name,age, phonenum, gender);
 							if(result==1) {
 								JOptionPane.showMessageDialog(this, "회원가입 완료");
 								dispose();

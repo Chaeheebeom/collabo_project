@@ -52,7 +52,7 @@ import java.awt.FlowLayout;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 
-public class ChatMain extends JFrame implements ActionListener{
+public class S_chatMain extends JFrame{
 
 	private JPanel contentPane;
     private JMenuItem Menuexit,Menulogout;
@@ -62,40 +62,25 @@ public class ChatMain extends JFrame implements ActionListener{
 	JPanel mainPanel;
 	JTextField chatField;//채팅창 입력하기
 	JTextArea chatArea;//출력 하기
-	private LoginVO vo=new LoginVO();
- 
+	private LoginVO lvo=new LoginVO();
+	private RoomVO rvo=new RoomVO();
 	JPanel s_chatPanel;
 	JTextField s_chatField;
 	JTextArea s_chatArea;
-	 
-	public ChatMain(LoginVO vo) {
-		this.vo=vo;
-		
+	
+	public S_chatMain(LoginVO lvo,RoomVO rvo) {
+		this.lvo=lvo;
+		this.rvo=rvo;
 		setTitle("OO\uD1A1");
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 300, 590);
 		
-		JMenuBar menuBar = new JMenuBar();
-		menuBar.setBackground(Color.WHITE);
-		setJMenuBar(menuBar);
-		
-		JMenu mnNewMenu = new JMenu("Menu");
-		mnNewMenu.setFont(new Font("", Font.BOLD, 20));
-		menuBar.add(mnNewMenu);
-		
-		Menulogout = new JMenuItem("로그아웃");
-		mnNewMenu.add(Menulogout);
-		
-		Menuexit = new JMenuItem("종료");
-		mnNewMenu.add(Menuexit);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
 	       
-	    Menuexit.addActionListener(this);
-	    Menulogout.addActionListener(this);
 	     
 	   
 	    //채팅 UI
@@ -105,18 +90,11 @@ public class ChatMain extends JFrame implements ActionListener{
 	    
 	    JPanel north_panel=new JPanel();
 	    north_panel.setLayout(new BorderLayout(0,0));
-	    JLabel mainLabel=new JLabel("공개대화");
-	    JButton secBtn=new JButton("비밀대화하기");
+	    JLabel mainLabel=new JLabel("비밀대화");
+
 	    north_panel.add(mainLabel);
-	    north_panel.add(secBtn,BorderLayout.EAST);
+	   
 	    chatPanel.add(north_panel,BorderLayout.NORTH);
-	    secBtn.addActionListener(new ActionListener() {//비밀대화하기
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SecretChat frame=new SecretChat(vo);
-				frame.setVisible(true);
-			}
-		});
 	    
 	    chatArea=new JTextArea();  //서로 대화하는 곳
 	    chatScroll.setViewportView(chatArea);
@@ -142,37 +120,24 @@ public class ChatMain extends JFrame implements ActionListener{
 	    startClient();
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JMenuItem item=(JMenuItem)e.getSource();
-			if(item==Menuexit) {
-				int result=JOptionPane.showConfirmDialog(this, "정말 종료하시겠습니까?", "시스템종료", JOptionPane.OK_CANCEL_OPTION);
-				if(result==0) {
-				System.exit(0);
-				}				
-			}else if(item==Menulogout) {
-				dispose();
-				login login=new login();
-				login.setVisible(true);
-			}
-	}
-
 	//전송하는부분
 	class Enter extends KeyAdapter implements ActionListener{
 		@Override//엔터입력했을때
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-				String id=vo.getId();
+				String id=lvo.getId();
+				String passwd=rvo.getRoomPasswd();
 				String data=chatField.getText();
-				send(id+"-"+data);
+				send(id+"-"+data+"-"+passwd);
 				chatField.setText("");
 			}
 		}
 		@Override//전송버튼눌렀을때
 		public void actionPerformed(ActionEvent e) {
-			String id=vo.getId();
+			String id=lvo.getId();
+			String passwd=rvo.getRoomPasswd();
 			String data=chatField.getText();
-			send(id+"-"+data); //뒤에 아이디 붙잉기
+			send(id+"-"+data+"-"+passwd); //뒤에 아이디 붙잉기
 			chatField.setText("");
 		}
 	}	
@@ -188,7 +153,7 @@ public class ChatMain extends JFrame implements ActionListener{
 						socket = new Socket();
 						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
-						String data=vo.getId()+"님이 입장하셨습니다.-"+vo.getId();//다른 사람에게 입장을 알리는 것
+						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것
 						send(data);
 					}catch(Exception e) {
 						//mainText.append("서버와 통신안됨\n");
@@ -221,8 +186,8 @@ public class ChatMain extends JFrame implements ActionListener{
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
 							String[] newdata=data.split("-");
-								if(newdata.length==2) { //비밀대화창으로 보낸건지확인
-									if(!(newdata[0].equals(vo.getId()))) 
+								if(newdata.length==3) {
+									if(!(newdata[0].equals(lvo.getId()))) 
 										chatArea.append(newdata[0]+">"+newdata[1]+"\n");
 								}
 							//mainText.append("상대방"+data+"\n");
@@ -255,4 +220,5 @@ public class ChatMain extends JFrame implements ActionListener{
 		}
 	
 }	
+
 

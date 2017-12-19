@@ -15,4 +15,6 @@ public class ClientVO {
 		public Socket getSocket() {
 			return socket;
 		}		
+		
+		
 }
