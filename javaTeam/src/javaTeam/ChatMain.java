@@ -206,7 +206,7 @@ public class ChatMain extends JFrame implements ActionListener{
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
 							String[] newdata=data.split("-");
 								if(!(newdata[1].equals(vo.getId())))
-									chatArea.append(newdata[0]+">"+newdata[1]+"\n");
+									chatArea.append(newdata[1]+">"+newdata[0]+"\n");
 							//mainText.append("상대방"+data+"\n");
 						}catch(Exception e) {e.printStackTrace();
 							//mainText.append("클라reecive안됨\n");
