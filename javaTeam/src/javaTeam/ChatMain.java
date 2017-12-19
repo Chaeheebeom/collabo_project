@@ -147,15 +147,17 @@ public class ChatMain extends JFrame implements ActionListener{
 		@Override//엔터입력했을때
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+				String id=vo.getId();
 				String data=chatField.getText();
-				send(data);
+				send(data+"-"+id);
 				chatField.setText("");
 			}
 		}
 		@Override//전송버튼눌렀을때
 		public void actionPerformed(ActionEvent e) {
+			String id=vo.getId();
 			String data=chatField.getText();
-			send(data);
+			send(data+"-"+id); //뒤에 아이디 붙잉기
 			chatField.setText("");
 		}
 		
@@ -163,7 +165,6 @@ public class ChatMain extends JFrame implements ActionListener{
 	
 	//클라이언트가 실행되는 부분
 		Socket socket;
-		
 		//시작되는 부분
 		void startClient() {
 			Thread thread=new Thread() { //스레드생성
@@ -203,7 +204,9 @@ public class ChatMain extends JFrame implements ActionListener{
 							int readByte=is.read(byteArr); //값을 받는부분
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
-							chatArea.append("상대방>"+data+"\n");
+							String[] newdata=data.split("-");
+								if(!(newdata[1].equals(vo.getId())))
+									chatArea.append(newdata[0]+">"+newdata[1]+"\n");
 							//mainText.append("상대방"+data+"\n");
 						}catch(Exception e) {e.printStackTrace();
 							//mainText.append("클라reecive안됨\n");
@@ -220,7 +223,10 @@ public class ChatMain extends JFrame implements ActionListener{
 					try {
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
-						chatArea.append("나>"+data+"\n");
+						String[] newdata=data.split("-");
+							if(!(newdata[1].equals(vo.getId())))
+								chatArea.append(newdata[0]+">"+newdata[1]+"\n");
+						chatArea.append("나>"+newdata[0]+"\n");
 						os.write(byteArr);
 						os.flush();
 						//mainText.append("전송완료\n");

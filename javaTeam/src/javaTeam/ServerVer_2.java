@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -89,9 +91,9 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 		
 		//서버시작
 		void startServer() {
-			//executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
+			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
 			//ExecutorService 객체를 얻을려면 Executors.newFixedThreadPool 사용 Runtime.getRuntime().availableProcessors()==cpu코어수 만큼 스레드 생성
-			executorService = Executors.newFixedThreadPool(10);
+			//executorService = Executors.newFixedThreadPool(10);
 			try {
 				serverSocket=new ServerSocket(); //객체생성
 				serverSocket.bind(new InetSocketAddress(5001)); //5001번포트와 연결
@@ -164,8 +166,12 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 								String message=socket.getRemoteSocketAddress()+"에서 요청처리함";
 								String Data=new String(byteArr, 0, readByte,"UTF-8");//보내기위환 변환처리
 								mainText.append(message+"-내용: "+Data+"\n");//메인창에 띄우기
-								for(Client client: connections) {client.send(Data);}//보내는부분
-										}
+								for(Client client: connections) {
+									client.send(Data);	
+									}
+																		
+									//보내는부분
+								}
 						}catch(Exception e) {
 							try {
 								connections.remove(Client.this);
