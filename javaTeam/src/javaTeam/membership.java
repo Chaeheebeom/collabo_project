@@ -186,23 +186,42 @@ public class membership extends JFrame implements ActionListener{
 			String name=textName.getText();
 			String strNum=textNum.getText();
 			String strAge=textAge.getText();
-			int age=0;
-			int	phonenum=0;
+			int age;
+			int	phonenum;
 			try {
 				age=Integer.parseInt(strAge);
+			
+			try {				
 				phonenum=Integer.parseInt(strNum);  
 					try {
-						if(idOverlap()) {//중복확인
-							idLabel.setText("중복된 아이디입니다.");
-							//빈칸이 있는지 확인하는 부분
-						}else if(age<0){
-							JOptionPane.showMessageDialog(this,"나이를 다시 입력해주세요");
-							ageLabel.setText("제대로 입력해 주세요");
-						}else if(id.equals(null) || pwd.equals(null) || name.equals(null) || phonenum==0  || gender.equals(null)) {
-							JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");	//공란이 있을경우 띄워준다.
-							if(textPWD.equals(null)) {pwLabel.setText("입력해주세요");}
-							else if(textName.equals(null)) {nameLabel.setText("입력해주세요");}
-							else if(textNum.equals(null)) {numLabel.setText("입력해주세요");}
+						
+						if(idOverlap()) {
+							JOptionPane.showMessageDialog(this, "아이디가 중복됩니다");
+						
+						//빈칸이 있는지 확인하는 부분
+						}else if(age<0){		    	
+						    JOptionPane.showMessageDialog(this,"나이를 다시 입력해주세요");
+						    ageLabel.setText("제대로 입력해 주세요");							
+						}else if(id.equals("") || pwd.equals("") || name.equals("") || gender.equals(null)) {
+							if(id.equals("")) {idLabel.setText("id를 입력해주세요");
+							pwLabel.setText("");
+							nameLabel.setText("");
+							ageLabel.setText("");
+							numLabel.setText("");
+							}
+							else if(pwd.equals("")) {pwLabel.setText("비밀번호를 입력해주세요");
+							idLabel.setText("");
+							nameLabel.setText("");
+							ageLabel.setText("");
+							numLabel.setText("");
+							}
+							else if(name.equals("")) {nameLabel.setText("이름을 입력해주세요");
+							idLabel.setText("");
+							pwLabel.setText("");
+							ageLabel.setText("");
+							numLabel.setText("");							
+							}							
+							JOptionPane.showMessageDialog(this, "공란 없이 입력해주세요");	//공란이 있을경우 띄워준다.							
 						}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
 							JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
 						}else {	//위조건에 문제가 없을 경우에 DB에 회원자료 집어넣기
@@ -213,12 +232,37 @@ public class membership extends JFrame implements ActionListener{
 							}
 						}
 					}catch(Exception e3) {JOptionPane.showMessageDialog(this, "성별을 선택해 주세요");}  //gender.equals(null)에대한 예외처리//
-				}catch(ClassCastException cce) {numLabel.setText("숫자만 입력하세요"); //폰번호에 이상한거 들어갔을때 예외처리
+			}catch(NumberFormatException nfe) {numLabel.setText("전화번호를 입력하세요"); 
+				JOptionPane.showMessageDialog(this, "공란없이 입력해주세요");
+				idLabel.setText("");
+				pwLabel.setText("");
+				nameLabel.setText("");			
+				ageLabel.setText("");	
+			} //나이에 이상한거 또는 공란일경우 예외처리
+			
+			}catch(NumberFormatException nfe2) {ageLabel.setText("나이를 입력하세요");
+			JOptionPane.showMessageDialog(this, "공란없이 입력해주세요");//폰번호에 이상한거 또는 공란일경우 들어갔을때 예외처리
+			idLabel.setText("");
+			pwLabel.setText("");
+			nameLabel.setText("");
+			numLabel.setText("");			
 			}
 		}else if(btn==btnOverlap) { //중복확인부분
-			if(idOverlap())
-				idLabel.setText("중복된 아이디입니다.");
+			String id=textID.getText();
+			if(idOverlap()) {
+				JOptionPane.showMessageDialog(this, "중복된 아이디입니다.");
+			}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
+				JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
+			}else {
+				JOptionPane.showMessageDialog(this, "사용가능한 아이디입니다.");
+			}
 		}else if(btn==btnCancle) {
+			textID.setText("");
+			textPWD.setText("");
+			textName.setText("");
+			textAge.setText("");
+			textNum.setText("");
+			idLabel.setText("");
 			dispose();
 		}
 	}
@@ -234,9 +278,10 @@ public class membership extends JFrame implements ActionListener{
 						return true;
 					}
 				}
-		}catch(Exception e2) {idLabel.setText("입력해주세요");}
+		}catch(Exception e2) {idLabel.setText("사용가능한 아이디입니다.");}
 		return false;
 	}
 }
+
 
 
