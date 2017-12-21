@@ -13,6 +13,7 @@ public class LoginDAO {
 		Connection con=null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";
 			String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 			con=DriverManager.getConnection(url,"root","12345");
 		} catch (ClassNotFoundException | SQLException e) {

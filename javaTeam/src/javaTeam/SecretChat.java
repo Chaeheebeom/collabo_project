@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.sql.SQLException;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -33,7 +36,7 @@ import javax.swing.JTable;
 			this.lvo=lvo;
 			 //비밀대화 UI 시작
 			setTitle("비밀대화방만들기");
-			setBounds(100, 100, 400, 180);
+			setBounds(100, 100, 400, 500);
 			JPanel main=new JPanel();
 		    
 		    main.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -52,6 +55,7 @@ import javax.swing.JTable;
 		    main.add(sec_main_panel,BorderLayout.NORTH);
 		    JPanel s_panel = new JPanel();
 		    makeBtn=new JButton("방생성하기");
+		    makeBtn.setEnabled(false);
 		    okBtn=new JButton("방들어가기");
 		    cencelBtn=new JButton("취소");
 		    s_panel.add(makeBtn);
@@ -78,6 +82,20 @@ import javax.swing.JTable;
 			}
 			table.setModel(model);
 		    
+			roomPasswdText.addKeyListener(new KeyAdapter() {
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					char pass[]=roomPasswdText.getPassword();
+					String roomPasswd=new String(pass,0,pass.length);
+					if(roomPasswd.equals("")) {
+						makeBtn.setEnabled(false);
+					}else {
+						makeBtn.setEnabled(true);
+					}
+				}
+				
+			});
 			
 			makeBtn.addActionListener(this);
 		    okBtn.addActionListener(this);
@@ -90,27 +108,28 @@ import javax.swing.JTable;
 			if(btn==makeBtn) {
 				String roomName=null;
 				String roomPasswd=null;;
-				if(roomNameText.getText().equals(null)) {
-					roomName="default";
-				}else if(roomPasswdText.getPassword()==null) {
-					JOptionPane.showMessageDialog(this, "비밀번호를 입력해주세요");
-				}else {
-					roomName=roomNameText.getText();
-				}
+				//방이름 설정
+				roomName=roomNameText.getText();
+				if(roomName.equals("")) {roomName="default";}
+				
 				char pass[]=roomPasswdText.getPassword();
 				roomPasswd=new String(pass,0,pass.length);
+				
 				int roomNumber=(int)(Math.random()*100);
-			//패스워드랑 룸이름 룸넘버 다 받아옴
+				
+				//패스워드랑 룸이름 룸넘버 다 받아옴
 				RoomDAO dao=new RoomDAO();
+				
 				dao.roomMake(roomNumber, roomName, roomPasswd);//방정보 넣어버리기
-			//대화창으로 넘어가기	
-				Vector<RoomVO> vec=new Vector<>();
-				RoomVO vo=new RoomVO();
-				vec=dao.selectedRoom(roomNumber);
-				vo=vec.get(0);
-				S_chatMain frame=new S_chatMain(lvo,vo);
-				frame.setVisible(true);
-			dispose();
+				//대화창으로 넘어가기	
+				
+				RoomVO vo=dao.selectedRoom(roomNumber);
+				if(vo.getRoomPasswd().equals(roomPasswd)) {
+					S_chatMain frame=new S_chatMain(lvo,vo);
+					frame.setVisible(true);		
+					dispose();
+				}	
+	
 			//대화창으로 들어가기
 			}else if(btn==okBtn) {
 				//비밀번호입력받기
@@ -118,25 +137,20 @@ import javax.swing.JTable;
 				//테이블에있는값 가져오기		
 				TableModel model=table.getModel();
 				int row=table.getSelectedRow();
-				String strRoomNum=String.valueOf(model.getValueAt(row, 0));//방번호
-				int roomNum=Integer.parseInt(strRoomNum);
 				
-				Vector<RoomVO> vec=new Vector<>();
-				RoomDAO dao=new RoomDAO();
-				vec=dao.selectedRoom(roomNum);
-				RoomVO vo=new RoomVO();
-				vo=vec.get(0);
-				System.out.println(roomPasswd);
-				System.out.println(vo.getRoomName()+vo.getRoomNumber()+vo.getRoomPasswd());
-				//비밀번호 비교하기
-				if(vo.getRoomPasswd().equals(roomPasswd)) {
-					//방띄우기
-					S_chatMain frame=new S_chatMain(lvo,vo);
-					frame.setVisible(true);
-					dispose();
-				}else {
-					JOptionPane.showMessageDialog(this, "비밀번호를 확인해주세요");
-				}
+				try {
+					String strRoomNum=String.valueOf(model.getValueAt(row, 0));//방번호예외처리
+					int roomNum=Integer.parseInt(strRoomNum);
+					RoomDAO dao=new RoomDAO();
+					RoomVO vo=dao.selectedRoom(roomNum);
+					if(vo.getRoomPasswd().equals(roomPasswd)) {
+						S_chatMain frame=new S_chatMain(lvo,vo);
+						frame.setVisible(true);		
+						dispose();
+					}
+				}catch(ArrayIndexOutOfBoundsException arrayE) {
+					JOptionPane.showMessageDialog(this, "방을 선택해주세요", "오류", JOptionPane.ERROR_MESSAGE);
+					}
 			}else if(btn==cencelBtn) {
 				dispose();
 			}

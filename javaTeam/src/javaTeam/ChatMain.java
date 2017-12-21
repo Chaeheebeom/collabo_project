@@ -148,9 +148,11 @@ public class ChatMain extends JFrame implements ActionListener{
 			if(item==Menuexit) {
 				int result=JOptionPane.showConfirmDialog(this, "정말 종료하시겠습니까?", "시스템종료", JOptionPane.OK_CANCEL_OPTION);
 				if(result==0) {
+				stopClient();
 				System.exit(0);
 				}				
 			}else if(item==Menulogout) {
+				stopClient();
 				dispose();
 				login login=new login();
 				login.setVisible(true);
@@ -188,10 +190,10 @@ public class ChatMain extends JFrame implements ActionListener{
 						socket = new Socket();
 						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
-						String data=vo.getId()+"님이 입장하셨습니다.-"+vo.getId();//다른 사람에게 입장을 알리는 것
+						String data=vo.getId()+"-"+vo.getId()+"님이 입장하셨습니다.";//다른 사람에게 입장을 알리는 것
 						send(data);
 					}catch(Exception e) {
-						//mainText.append("서버와 통신안됨\n");
+						chatArea.append("서버와 연결안됨");
 						if(!socket.isClosed())
 							stopClient();
 						return;
@@ -211,8 +213,7 @@ public class ChatMain extends JFrame implements ActionListener{
 			}catch(Exception e) {}
 		}
 		//서버에서 보낸것을 받는부분
-		void receive() {
-					
+		void receive() {	
 			while(true) {
 						try {
 							byte[] byteArr =new byte[100];
@@ -242,7 +243,8 @@ public class ChatMain extends JFrame implements ActionListener{
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
 						String[] newdata=data.split("-");
-						chatArea.append("나>"+newdata[1]+"\n");
+						if((newdata[0].equals(vo.getId()))) 
+							chatArea.append("나>"+newdata[1]+"\n");
 						os.write(byteArr);
 						os.flush();
 						//mainText.append("전송완료\n");

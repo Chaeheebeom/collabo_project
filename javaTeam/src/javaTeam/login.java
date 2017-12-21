@@ -142,7 +142,8 @@ public class login extends JFrame implements ActionListener{
 			vo=vec.get(i); //DB에 있는 것
 				if(vo.getId().equals(id) && vo.getPwd().equals(passwd)) { //비교하기
 					ChatMain frame=new ChatMain(vo);//내꺼 정보넘기기
-					frame.setVisible(true); //메인창 띄우기
+					//frame.setVisible(true); //메인창 띄우기
+					frame.setVisible(true);
 					dispose();//로그인창 닫기
 					break;
 				}else {

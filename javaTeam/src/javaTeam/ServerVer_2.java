@@ -88,7 +88,7 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 		ExecutorService executorService; //스레드풀 메소드
 		ServerSocket serverSocket; //서버소켓
 		List<Client> connections = new Vector<Client>(); //연결된 클라이언트를 저장하는 것
-		
+		RoomDAO dao=new RoomDAO();
 		//서버시작
 		void startServer() {
 			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
@@ -115,12 +115,13 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 							mainText.append(message+"\n");//메인텍스트에 뿌려주기
 							Client client=new Client(socket);//클라이언트객체생성
 							connections.add(client);//벡터에저장
-							mainText.append("접속자수 :"+connections.size()+"\n");
+							mainText.append("[접속자수 :"+connections.size()+"명]\n");
 						}catch(Exception e) {
 							if(!serverSocket.isClosed())
 								stopServer();
 							break;//위와 같은 예외처리
 						}
+						dao.deleteRoom();
 					}
 				}
 			};
@@ -140,7 +141,9 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 				if(executorService!=null && !executorService.isShutdown())
 					executorService.shutdown(); //스레드풀닫기
 				mainText.append("stopserver서버종료\n");
+				dao.deleteRoom();
 			}catch(Exception e) {}
+			dao.deleteRoom();
 			togglebtn.setText("서버정지");
 			togglebtn.setSelected(false);
 		}
@@ -163,20 +166,19 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 								InputStream is=socket.getInputStream();  
 								int readByte=is.read(byteArr);//입력받는부분
 								if(readByte==-1) {throw new IOException();}//예외처리
-								String message=socket.getRemoteSocketAddress()+"에서 요청처리함";
+								String message=socket.getRemoteSocketAddress()+"에서 요청처리함\n";
 								String Data=new String(byteArr, 0, readByte,"UTF-8");//보내기위환 변환처리
-								mainText.append(message+"-내용: "+Data+"\n");//메인창에 띄우기
-								for(Client client: connections) {
+								mainText.append(message+"[내용: "+Data+"]\n");//메인창에 띄우기
+								for(Client client: connections) 
 									client.send(Data);	
-									}
-																		
-									//보내는부분
 								}
 						}catch(Exception e) {
 							try {
 								connections.remove(Client.this);
-								String message = "reeive 통신안됨 : "+socket.getRemoteSocketAddress()+"\n";
+								String message = "[통신종료 : "+socket.getRemoteSocketAddress()+"]\n";
+								connections.remove(socket);
 								mainText.append(message);
+								mainText.append("[접속자수 :"+connections.size()+"명]\n");
 								socket.close();
 							}catch(Exception E) {}
 						}
@@ -197,7 +199,7 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 							os.flush(); //메모리풀어주기
 						}catch(Exception e) {
 							try {
-								String message="send통신안됨 : "+socket.getRemoteSocketAddress()+"\n";
+								String message="[송신불가 : "+socket.getRemoteSocketAddress()+"]\n";
 								mainText.append(message);
 								connections.remove(Client.this);
 								socket.close();

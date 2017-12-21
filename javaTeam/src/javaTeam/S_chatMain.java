@@ -154,9 +154,12 @@ public class S_chatMain extends JFrame{
 						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
 						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것
+						RoomDAO dao=new RoomDAO();
+						dao.update_count(rvo, 1, rvo.getRoomNumber());
 						send(data);
 					}catch(Exception e) {
-						//mainText.append("서버와 통신안됨\n");
+						RoomDAO dao=new RoomDAO();
+						dao.update_count(rvo, -1, rvo.getRoomNumber());
 						if(!socket.isClosed())
 							stopClient();
 						return;
@@ -168,6 +171,8 @@ public class S_chatMain extends JFrame{
 		//정지하는 부분
 		void stopClient() {
 			try {
+				RoomDAO dao=new RoomDAO();
+				dao.update_count(rvo, -1, rvo.getRoomNumber());
 				//mainText.append("접속종료\n");
 				if(!socket.isClosed() && socket!=null)
 					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
@@ -207,7 +212,8 @@ public class S_chatMain extends JFrame{
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
 						String[] newdata=data.split("-");
-						chatArea.append("나>"+newdata[1]+"\n");
+						if((newdata[0].equals(lvo.getId())))
+							chatArea.append("나>"+newdata[1]+"\n");
 						os.write(byteArr);
 						os.flush();
 						//mainText.append("전송완료\n");

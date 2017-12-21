@@ -4,11 +4,13 @@ public class RoomVO {
 	int roomNumber;
 	String roomName;
 	String roomPasswd;
-	public RoomVO(int roomNumber, String roomName, String roomPasswd) {
+	int count;
+	public RoomVO(int roomNumber, String roomName, String roomPasswd,int count) {
 		super();
 		this.roomNumber = roomNumber;
 		this.roomName = roomName;
 		this.roomPasswd = roomPasswd;
+		this.count=count;
 	}
 	public RoomVO() {
 		
@@ -30,6 +32,12 @@ public class RoomVO {
 	}
 	public void setRoomPasswd(String roomPasswd) {
 		this.roomPasswd = roomPasswd;
+	}
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
 	}
 	
 	

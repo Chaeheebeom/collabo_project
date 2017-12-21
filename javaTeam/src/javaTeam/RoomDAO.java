@@ -13,6 +13,7 @@ public class RoomDAO {
 			Connection con=null;
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
+				//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";
 				String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 				con=DriverManager.getConnection(url,"root","12345");
 			} catch (ClassNotFoundException | SQLException e) {
@@ -47,7 +48,7 @@ public class RoomDAO {
 		public int roomMake(int roomNumber, String roomName,String roomPasswd) {
 			PreparedStatement pstmt=null;
 			Connection con=null;
-			String sql="insert into secretroomtbl(roomnumber, roomname, roompasswd) values(?,?)";
+			String sql="insert into secretroomtbl(roomnumber, roomname, roompasswd,count) values(?,?,?,?)";
 			int result=0;
 			try {
 				con = getConnection();
@@ -55,6 +56,7 @@ public class RoomDAO {
 				pstmt.setInt(1, roomNumber);
 				pstmt.setString(2, roomName);
 				pstmt.setString(3, roomPasswd);
+				pstmt.setInt(4, 0);
 				result=pstmt.executeUpdate();
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -78,7 +80,8 @@ public class RoomDAO {
 					int roomNumber =rs.getInt(1);
 					String roomName=rs.getString(2);
 					String roomPasswd=rs.getString(3);
-					RoomVO vo=new RoomVO(roomNumber,roomName,roomPasswd);
+					int count=rs.getInt(4);
+					RoomVO vo=new RoomVO(roomNumber,roomName,roomPasswd,count);
 					vec.add(vo);
 				}
 			} catch (SQLException e) {
@@ -88,30 +91,68 @@ public class RoomDAO {
 			}
 			return vec;
 		}
-		//방정보하나방정보를 받아오는 것
-				public Vector<RoomVO> selectedRoom(int roomNum) {
+		
+		//방번호를 받고 해당하는 정보를 출력
+				public RoomVO selectedRoom(int roomNumber) {
 					Connection con=getConnection();
 					PreparedStatement pstmt =null;
 					ResultSet rs=null;
-					String sql="select * from secretroomtbl where roomnumber=?";
-					Vector<RoomVO> vec=new Vector<>();
+					String sql="select * from secretroomtbl where roomnumber="+roomNumber;
+					System.out.println(sql);
+					RoomVO vo=null;
 					try {
 						con = getConnection();
 						pstmt=con.prepareStatement(sql);
-						pstmt.setInt(roomNum,1);
 						rs=pstmt.executeQuery();
 						while(rs.next()) {
-							int roomNumber =rs.getInt(1);
+							roomNumber=rs.getInt(1);
 							String roomName=rs.getString(2);
 							String roomPasswd=rs.getString(3);
-							RoomVO vo=new RoomVO(roomNumber,roomName,roomPasswd);
-							vec.add(vo);
+							int count=rs.getInt(4);
+							vo=new RoomVO(roomNumber,roomName,roomPasswd,count);
 						}
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}finally {
 						close(con,pstmt,rs);
 					}
-					return vec;
+					return vo;
 				}
+				//방인원수 증감/
+				public void update_count(RoomVO vo,int count, int roomNumber) {
+					PreparedStatement pstmt=null;
+					Connection con=null;
+					String sql="update secretroomtbl set count=? where roomnumber=?";
+					int result=0;
+					try {
+						con = getConnection();
+						pstmt=con.prepareStatement(sql);
+						int newCount=vo.getCount();
+						newCount=newCount+count;
+						pstmt.setInt(1, newCount);
+						pstmt.setInt(2, roomNumber);
+						result=pstmt.executeUpdate();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}finally {
+						close(con,pstmt);
+					}
+				}
+				//빈방삭제
+				public boolean deleteRoom() {
+					PreparedStatement pstmt=null;
+					Connection con=null;
+					String sql="delete from secretroomtbl where count=0";
+					try {
+						con = getConnection();
+						pstmt=con.prepareStatement(sql);
+						pstmt.executeUpdate();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						return false;
+					}finally {
+						close(con,pstmt);
+					}return true;
+				}
+				
 }
