@@ -121,7 +121,6 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 								stopServer();
 							break;//위와 같은 예외처리
 						}
-						dao.deleteRoom();
 					}
 				}
 			};
@@ -141,9 +140,7 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 				if(executorService!=null && !executorService.isShutdown())
 					executorService.shutdown(); //스레드풀닫기
 				mainText.append("stopserver서버종료\n");
-				dao.deleteRoom();
 			}catch(Exception e) {}
-			dao.deleteRoom();
 			togglebtn.setText("서버정지");
 			togglebtn.setSelected(false);
 		}
