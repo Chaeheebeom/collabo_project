@@ -211,7 +211,7 @@ public class Find extends JFrame {
 			vec=dao.userlist();//DB에서 받아오기
 			for(int i=0;i<vec.size();i++) {
 				vo=vec.get(i);
-					if(vo.getName().equals(name) && vo.getPwd()==pwd) { //비교하는 부분
+					if(vo.getName().equals(name) && vo.getId()==strId) { //비교하는 부분
 						pwd=vo.getPwd();
 						JOptionPane.showMessageDialog(this, "당신의 비밀번호는 : "+pwd+" 입니다");
 						dispose();
