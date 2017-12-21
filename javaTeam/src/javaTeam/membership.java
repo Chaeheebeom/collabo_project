@@ -253,6 +253,7 @@ public class membership extends JFrame implements ActionListener{
 				JOptionPane.showMessageDialog(this, "중복된 아이디입니다.");
 			}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
 				JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
+				idLabel.setText("아이디는 4~15글자 이여야 합니다.");
 			}else {
 				JOptionPane.showMessageDialog(this, "사용가능한 아이디입니다.");
 			}
@@ -278,7 +279,7 @@ public class membership extends JFrame implements ActionListener{
 						return true;
 					}
 				}
-		}catch(Exception e2) {idLabel.setText("사용가능한 아이디입니다.");}
+		}catch(Exception e2) {}//idLabel.setText("사용가능한 아이디입니다.");
 		return false;
 	}
 }
