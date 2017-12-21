@@ -79,10 +79,7 @@ public class S_chatMain extends JFrame{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
-		
-	       
-	     
-	   
+			   
 	    //채팅 UI
 	    chatPanel =new JPanel();
 	    chatPanel.setLayout(new BorderLayout(0,0));
@@ -122,7 +119,7 @@ public class S_chatMain extends JFrame{
 	
 	//전송하는부분
 	class Enter extends KeyAdapter implements ActionListener{
-		@Override//엔터입력했을때
+		@Override//엔터입력했을때//공개채팅과비슷하지만 여기서는 비밀번호값을 같이넘김 이유: 서버에서는 모든 클라이언트에 포딩을 하기떄문에비밀대화방에서만 출력할것과 공개채팅에서 출력할 것을 구분할 필요가 있음 
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 				String id=lvo.getId();
@@ -137,7 +134,7 @@ public class S_chatMain extends JFrame{
 			String id=lvo.getId();
 			String passwd=rvo.getRoomPasswd();
 			String data=chatField.getText();
-			send(id+"-"+data+"-"+passwd); //뒤에 아이디 붙잉기
+			send(id+"-"+data+"-"+passwd); //이하동문
 			chatField.setText("");
 		}
 	}	
@@ -153,13 +150,14 @@ public class S_chatMain extends JFrame{
 						socket = new Socket();
 						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
-						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것
+						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것//여기서도 패스워드를 날려버림
 						RoomDAO dao=new RoomDAO();
-						dao.update_count(rvo, 1, rvo.getRoomNumber());
-						send(data);
+						dao.update_count(rvo, 1, rvo.getRoomNumber());//방DB에 접속헀을때 1카운트함
+						send(data);                                    //이유:DB카운트가 0일경우삭제하기 위함
 					}catch(Exception e) {
 						RoomDAO dao=new RoomDAO();
-						dao.update_count(rvo, -1, rvo.getRoomNumber());
+						dao.update_count(rvo, -1, rvo.getRoomNumber());//위와 반대
+						dao.deleteRoom();//종료할떄삭제하는거야
 						if(!socket.isClosed())
 							stopClient();
 						return;
@@ -173,11 +171,9 @@ public class S_chatMain extends JFrame{
 			try {
 				RoomDAO dao=new RoomDAO();
 				dao.update_count(rvo, -1, rvo.getRoomNumber());
-				//mainText.append("접속종료\n");
+				dao.deleteRoom();//종료할떄삭제하는거야
 				if(!socket.isClosed() && socket!=null)
 					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
-				//toggleBtn.setText("종료");
-				//toggleBtn.setSelected(false);
 			}catch(Exception e) {}
 		}
 		//서버에서 보낸것을 받는부분
@@ -191,13 +187,12 @@ public class S_chatMain extends JFrame{
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
 							String[] newdata=data.split("-");
-								if(newdata.length==3) {
+								if(newdata[2].equals(rvo.roomPasswd)) {//이 비밀대화창에 보낸것이 맞는가 확이나는 것
 									if(!(newdata[0].equals(lvo.getId()))) 
 										chatArea.append(newdata[0]+">"+newdata[1]+"\n");
 								}
-							//mainText.append("상대방"+data+"\n");
 						}catch(Exception e) {e.printStackTrace();
-							//mainText.append("클라reecive안됨\n");
+							chatArea.append("[시스템오류:통신안됨]");
 							stopClient();
 							break;
 						}
@@ -216,15 +211,13 @@ public class S_chatMain extends JFrame{
 							chatArea.append("나>"+newdata[1]+"\n");
 						os.write(byteArr);
 						os.flush();
-						//mainText.append("전송완료\n");
 					}catch(Exception e) {
-						//mainText.append("클라send안됨\n");
+						chatArea.append("[시스템오류:통신안됨]");
 						stopClient();
 					}
 				}
 			};thread.start();
 		}
-	
 }	
 
 

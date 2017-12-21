@@ -13,7 +13,7 @@ public class RoomDAO {
 			Connection con=null;
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";
+				//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";//DB로 접속하는거
 				String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 				con=DriverManager.getConnection(url,"root","12345");
 			} catch (ClassNotFoundException | SQLException e) {
@@ -44,7 +44,7 @@ public class RoomDAO {
 				e.printStackTrace();
 			}
 		}
-		//방정보를 입력하는 부분//생성
+		//방정보를 받아서 생성하는 부분
 		public int roomMake(int roomNumber, String roomName,String roomPasswd) {
 			PreparedStatement pstmt=null;
 			Connection con=null;

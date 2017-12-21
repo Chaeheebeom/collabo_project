@@ -71,16 +71,15 @@ public class membership extends JFrame implements ActionListener{
 		//아이디입력받는부분
 		textID.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyTyped(KeyEvent e) {
-				String id=textID.getText();
-				if(id.length()>15 || id.length()<4) {
-					idLabel.setText("아이디는 4글자 이상 15글자 이하 여야합니다.");
-				}else if(id.length()<=15 || id.length()>=4) {
-					idLabel.setText("");
+			public void keyTyped(KeyEvent e) { //키가 타입될때마다 키이벤트 실행함
+				String id=textID.getText();  //id입력부분에 값을받아서
+				if(id.length()>15 || id.length()<4) { //15글자이상 4글자 이하라면
+					idLabel.setText("아이디는 4글자 이상 15글자 이하 여야합니다."); //옆에 라벨에 이렇게띄워줌
+				}else if(id.length()<=15 || id.length()>=4) { //아니라면
+					idLabel.setText(""); //아무것도 안띄움
 				}
 			}
 		});
-		
 	
 		idLabel = new JLabel("");
 		panel_1.add(idLabel);
@@ -155,12 +154,12 @@ public class membership extends JFrame implements ActionListener{
 		contentPane.add(panel_3, BorderLayout.EAST);
 		
 		btnOverlap = new JButton("중복확인");
-		btnOverlap.addActionListener(this); 
 		panel_3.add(btnOverlap);
-		
+		//액션리스너하는부분
+		btnOverlap.addActionListener(this); 
 		btnConfirm.addActionListener(this);
 		btnCancle.addActionListener(this);
-		
+		//남 혹은 여 를 눌렀을때 값(남 or 여)를 gender에 넣어주는 것
 		rdoman.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -178,32 +177,32 @@ public class membership extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JButton btn = (JButton)e.getSource();		
-		
-		if(btn==btnConfirm) {		
+		//버튼종류에 따라 실행하는 것이 다름 여기가 세번쨰의 첫번쨰
+		if(btn==btnConfirm) {	//회원가입버튼	
 			String id=textID.getText();
 			char[] password=textPWD.getPassword();
 			String pwd=new String(password, 0, password.length);
 			String name=textName.getText();
 			String strNum=textNum.getText();
-			String strAge=textAge.getText();
+			String strAge=textAge.getText();//각각 입력된 정보를 각각 타입에 맞는 변수에 저장
 			int age;
 			int	phonenum;
 			try {
-				age=Integer.parseInt(strAge);
+				age=Integer.parseInt(strAge); //예외처리 242번쨰줄 NumberFormatExecption 부분
 			
 			try {				
-				phonenum=Integer.parseInt(strNum);  
+				phonenum=Integer.parseInt(strNum);  //예외처리 234번쨰줄 NumberFormatExecption 부분
 					try {
 						
 						if(idOverlap()) {
-							JOptionPane.showMessageDialog(this, "아이디가 중복됩니다");
+							JOptionPane.showMessageDialog(this, "아이디가 중복됩니다"); //중복확인부분
 						
 						//빈칸이 있는지 확인하는 부분
 						}else if(age<0){		    	
-						    JOptionPane.showMessageDialog(this,"나이를 다시 입력해주세요");
+						    JOptionPane.showMessageDialog(this,"나이를 다시 입력해주세요");//혹시몰라서 해놓은거 나이가 -살이면 이상하잖아? 벤자민도아니고
 						    ageLabel.setText("제대로 입력해 주세요");							
-						}else if(id.equals("") || pwd.equals("") || name.equals("") || gender.equals(null)) {
-							if(id.equals("")) {idLabel.setText("id를 입력해주세요");
+						}else if(id.equals("") || pwd.equals("") || name.equals("") || gender.equals(null)) {//값이 없으면 각각 라벨에 비어있다고 띄워주는거임
+							if(id.equals("")) {idLabel.setText("id를 입력해주세요");//중첩 IF문 해당 라벨에만 띄워주는 것
 							pwLabel.setText("");
 							nameLabel.setText("");
 							ageLabel.setText("");
@@ -225,10 +224,10 @@ public class membership extends JFrame implements ActionListener{
 						}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
 							JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
 						}else {	//위조건에 문제가 없을 경우에 DB에 회원자료 집어넣기
-							int result=dao.login_Insert(id, pwd, name,age, phonenum, gender);
-							if(result==1) {
+							int result=dao.login_Insert(id, pwd, name,age, phonenum, gender); //잘집어넣었음 리턴값받음
+							if(result==1) {//리턴값여부에따라 회원가입완료
 								JOptionPane.showMessageDialog(this, "회원가입 완료");
-								dispose();
+								dispose();//회원가입창 닫기
 							}
 						}
 					}catch(Exception e3) {JOptionPane.showMessageDialog(this, "성별을 선택해 주세요");}  //gender.equals(null)에대한 예외처리//
@@ -247,9 +246,9 @@ public class membership extends JFrame implements ActionListener{
 			nameLabel.setText("");
 			numLabel.setText("");			
 			}
-		}else if(btn==btnOverlap) { //중복확인부분
-			String id=textID.getText();
-			if(idOverlap()) {
+		}else if(btn==btnOverlap) { //중복확인부분 여기가 세번쨰의 두번쨰
+			String id=textID.getText(); //아이디입력한 거 받아서
+			if(idOverlap()) {//if문으로 비교 위에거랑 중복이므로 설명생략
 				JOptionPane.showMessageDialog(this, "중복된 아이디입니다.");
 			}else if(id.length()>15 || id.length()<4) {  //아이디가 너무길거나 짧은지 확인하기
 				JOptionPane.showMessageDialog(this, "아이디는 4~15글자 사이여야합니다.");
@@ -257,14 +256,14 @@ public class membership extends JFrame implements ActionListener{
 			}else {
 				JOptionPane.showMessageDialog(this, "사용가능한 아이디입니다.");
 			}
-		}else if(btn==btnCancle) {
-			textID.setText("");
+		}else if(btn==btnCancle) {//여기가 세번쨰의 마지막 취소버튼
+			textID.setText("");  //다비워주고
 			textPWD.setText("");
 			textName.setText("");
 			textAge.setText("");
 			textNum.setText("");
 			idLabel.setText("");
-			dispose();
+			dispose(); //창닫기
 		}
 	}
 	
@@ -274,9 +273,9 @@ public class membership extends JFrame implements ActionListener{
 			vec=dao.getId();//id리스트를 받아오기
 			String ID=textID.getText(); //가입하고자하는 아이디
 				for(int i=0;i<=vec.size();i++) {					
-					String dbID=vec.get(i);//DB에있는아이디
+					String dbID=vec.get(i);//DB에있는아이디불러오기
 					if(ID.equals(dbID)) { //db에있는 아이디랑 가입하고자하는 아이디랑 비교
-						return true;
+						return true;//참값출력
 					}
 				}
 		}catch(Exception e2) {}//idLabel.setText("사용가능한 아이디입니다.");

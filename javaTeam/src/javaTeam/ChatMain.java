@@ -114,7 +114,7 @@ public class ChatMain extends JFrame implements ActionListener{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SecretChat frame=new SecretChat(vo);
-				frame.setVisible(true);
+				frame.setVisible(true);//비밀대화창 찾는거 띄우는거임
 			}
 		});
 	    
@@ -130,7 +130,7 @@ public class ChatMain extends JFrame implements ActionListener{
 	    chat_south_panel.add(sendBtn);
 	    chatPanel.add(chat_south_panel,BorderLayout.SOUTH);
 	    chatField.addKeyListener(new Enter());//232줄
-	    sendBtn.addActionListener(new Enter());
+	    sendBtn.addActionListener(new Enter());//232줄
 	    contentPane.add(chatPanel, BorderLayout.CENTER);
 	    
 	    JScrollPane scrollPane = new JScrollPane();
@@ -145,17 +145,17 @@ public class ChatMain extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JMenuItem item=(JMenuItem)e.getSource();
-			if(item==Menuexit) {
+			if(item==Menuexit) {//로그아웃 구현한거
 				int result=JOptionPane.showConfirmDialog(this, "정말 종료하시겠습니까?", "시스템종료", JOptionPane.OK_CANCEL_OPTION);
-				if(result==0) {
-				stopClient();
-				System.exit(0);
+				if(result==0) {//리턴값받아서 
+				stopClient();//채팅스레드닫아버리고
+				System.exit(0);//종료
 				}				
 			}else if(item==Menulogout) {
-				stopClient();
-				dispose();
+				stopClient();//채팅스레드닫고
+				dispose();//이창닫고
 				login login=new login();
-				login.setVisible(true);
+				login.setVisible(true);//로그인창 띄움
 			}
 	}
 
@@ -165,15 +165,15 @@ public class ChatMain extends JFrame implements ActionListener{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 				String id=vo.getId();
-				String data=chatField.getText();
-				send(id+"-"+data);
-				chatField.setText("");
+				String data=chatField.getText(); //입력한 메시지를 
+				send(id+"-"+data); //보내는거야
+				chatField.setText(""); //입력창 비워주고
 			}
 		}
 		@Override//전송버튼눌렀을때
 		public void actionPerformed(ActionEvent e) {
 			String id=vo.getId();
-			String data=chatField.getText();
+			String data=chatField.getText();//이하동문
 			send(id+"-"+data); //뒤에 아이디 붙잉기
 			chatField.setText("");
 		}
@@ -188,12 +188,12 @@ public class ChatMain extends JFrame implements ActionListener{
 				public void run() {
 					try {
 						socket = new Socket();
-						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
+						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분 여기는 채팅서버주소이어야함
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
 						String data=vo.getId()+"-"+vo.getId()+"님이 입장하셨습니다.";//다른 사람에게 입장을 알리는 것
 						send(data);
 					}catch(Exception e) {
-						chatArea.append("서버와 연결안됨");
+						chatArea.append("서버와 연결안됨");//예외처리
 						if(!socket.isClosed())
 							stopClient();
 						return;
@@ -205,11 +205,8 @@ public class ChatMain extends JFrame implements ActionListener{
 		//정지하는 부분
 		void stopClient() {
 			try {
-				//mainText.append("접속종료\n");
 				if(!socket.isClosed() && socket!=null)
 					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
-				//toggleBtn.setText("종료");
-				//toggleBtn.setSelected(false);
 			}catch(Exception e) {}
 		}
 		//서버에서 보낸것을 받는부분
@@ -221,14 +218,13 @@ public class ChatMain extends JFrame implements ActionListener{
 							int readByte=is.read(byteArr); //값을 받는부분
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
-							String[] newdata=data.split("-");
+							String[] newdata=data.split("-");//받은것을 나누어서
 								if(newdata.length==2) { //비밀대화창으로 보낸건지확인
-									if(!(newdata[0].equals(vo.getId()))) 
-										chatArea.append(newdata[0]+">"+newdata[1]+"\n");
+									if(!(newdata[0].equals(vo.getId()))) //아니라면 아이디가 내꺼가아니면 
+										chatArea.append(newdata[0]+">"+newdata[1]+"\n");//출력
 								}
-							//mainText.append("상대방"+data+"\n");
 						}catch(Exception e) {e.printStackTrace();
-							//mainText.append("클라reecive안됨\n");
+							chatArea.append("[시스템오류:전송불가]");//예외처리부분
 							stopClient();
 							break;
 						}
@@ -242,14 +238,13 @@ public class ChatMain extends JFrame implements ActionListener{
 					try {
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
-						String[] newdata=data.split("-");
-						if((newdata[0].equals(vo.getId()))) 
-							chatArea.append("나>"+newdata[1]+"\n");
-						os.write(byteArr);
+						String[] newdata=data.split("-");// 내가 보낼 데이터를 
+						if((newdata[0].equals(vo.getId()))) //이부분은 위리시브랑 달라야만 함! 내것을 출력하느냐 마느냐이기 떄문
+							chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
+						os.write(byteArr);//서버에 보내버리기(보낼땐 온전한 데이터를 보낸다)
 						os.flush();
-						//mainText.append("전송완료\n");
 					}catch(Exception e) {
-						//mainText.append("클라send안됨\n");
+						chatArea.append("[시스템오류:전송불가]");//예외처리부분
 						stopClient();
 					}
 				}

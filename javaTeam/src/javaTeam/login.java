@@ -125,7 +125,7 @@ public class login extends JFrame implements ActionListener{
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
-				login();
+				login();//엔터구현한거임 
 			}
 		}
 		

@@ -42,14 +42,11 @@ public class Find extends JFrame {
 		
 		btnIdFind = new JButton("아이디로 찾기");
 		panel_1.add(btnIdFind);
-		
+	
 		btnPwFind = new JButton("비밀번호로 찾기");
-		btnPwFind.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
 		panel_1.add(btnPwFind);
 		pack();
+		//아이디로 찾기창 띄워주기
 		btnIdFind.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -58,6 +55,7 @@ public class Find extends JFrame {
 				id.setVisible(true);
 			}
 		});
+		//비밀번호로 찾기창 띄워주기
 		btnPwFind.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -68,12 +66,13 @@ public class Find extends JFrame {
 		});
 	}
 	
-	//아이디찾는 것
+	//아이디찾기
 	class FindId extends JFrame implements ActionListener{
 		private JPanel contentPane;
 		private JButton btnFind,btnCancel;
 		private JLabel mainLabel,nameLabel,numLabel;
 		private JTextField nameText,numText;
+		
 		public FindId() {
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);//x버튼눌렀을때 로그인화면으로가기
 			setTitle("아이디찾기");
@@ -109,11 +108,12 @@ public class Find extends JFrame {
 			southPanel.add(btnFind);
 			southPanel.add(btnCancel);
 			pack(); //UI구현 끝
+			
 			btnFind.addActionListener(this);
 			btnCancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					dispose(); //취소버튼 
+					dispose(); //취소버튼눌렀을때 창닫기
 				}
 			});
 		}
@@ -125,7 +125,7 @@ public class Find extends JFrame {
 			String id=null;
 			int num=0;
 			try {
-				num=Integer.parseInt(strnum);
+				num=Integer.parseInt(strnum);//예외처리
 			}catch(NumberFormatException nfe) {
 				JOptionPane.showMessageDialog(this, "숫자만 입력해 주세요");//예외처리
 				nameText.selectAll();
@@ -134,7 +134,7 @@ public class Find extends JFrame {
 			LoginVO vo=new LoginVO();
 			Vector<LoginVO> vec=new Vector<>();
 			vec=dao.userlist();//DB에서 받아오기
-			for(int i=0;i<vec.size();i++) {
+			for(int i=0;i<vec.size();i++) {//비교하는거 membership에있는 코드랑 똑같으니까 설명생략
 				vo=vec.get(i);
 					if(vo.getName().equals(name) && vo.getPhonenum()==num) { //비교하는 부분
 						id=vo.getId();
@@ -148,7 +148,7 @@ public class Find extends JFrame {
 			}
 		}	
 	}
-	//비밀번호찾는 것 만들어야됨
+	//비밀번호찾기
 	class FindPw extends JFrame implements ActionListener{
 		private JPanel contentPane;
 		private JButton btnFind,btnCancel;
@@ -209,14 +209,14 @@ public class Find extends JFrame {
 			LoginVO vo=new LoginVO();
 			Vector<LoginVO> vec=new Vector<>();
 			vec=dao.userlist();//DB에서 받아오기
-			for(int i=0;i<vec.size();i++) {
-				vo=vec.get(i);
+			for(int i=0;i<vec.size();i++) { //받아온 유저리스트에서
+				vo=vec.get(i);  //하나씩 VO에 집어넣어서
 					if(vo.getName().equals(name) && vo.getId()==strId) { //비교하는 부분
-						pwd=vo.getPwd();
+						pwd=vo.getPwd(); //비교값이 맞다면 비밀번호를 알려줌
 						JOptionPane.showMessageDialog(this, "당신의 비밀번호는 : "+pwd+" 입니다");
 						dispose();
 						break;
-					}else {
+					}else { //비교하는도중 없다면
 						JOptionPane.showMessageDialog(this, "이름 혹은 아이디를 정확히 입력해 주세요");
 						break;
 					}

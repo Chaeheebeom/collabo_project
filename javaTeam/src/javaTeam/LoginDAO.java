@@ -13,8 +13,8 @@ public class LoginDAO {
 		Connection con=null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";
-			String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
+			String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true"; //우리집컴퓨터DB로 접속하는 것임
+			//String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 			con=DriverManager.getConnection(url,"root","12345");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -22,7 +22,7 @@ public class LoginDAO {
 		return con;
 	}
 	
-	public void close(Connection con,PreparedStatement pstmt,ResultSet rs) {
+	public void close(Connection con,PreparedStatement pstmt,ResultSet rs) { //닫는거
 		try {
 			if(rs!=null)
 				rs.close();
@@ -34,7 +34,7 @@ public class LoginDAO {
 			e.printStackTrace();
 		}
 	}
-	public void close(Connection con,PreparedStatement pstmt) {
+	public void close(Connection con,PreparedStatement pstmt) { //닫는거
 		try {
 			if(pstmt!=null)
 				pstmt.close();
