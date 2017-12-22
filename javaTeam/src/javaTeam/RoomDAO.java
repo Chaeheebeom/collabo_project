@@ -117,41 +117,6 @@ public class RoomDAO {
 					}
 					return vo;
 				}
-				//방인원수 증감/
-				public void update_count(RoomVO vo,int count, int roomNumber) {
-					PreparedStatement pstmt=null;
-					Connection con=null;
-					String sql="update secretroomtbl set count=? where roomnumber=?";
-					try {
-						con = getConnection();
-						pstmt=con.prepareStatement(sql);
-						int newCount=vo.getCount();
-						newCount=newCount+count;
-						pstmt.setInt(1, newCount);
-						pstmt.setInt(2, roomNumber);
-						pstmt.executeUpdate();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}finally {
-						close(con,pstmt);
-					}
-				}
-				//빈방삭제
-				public boolean deleteRoom() {
-					PreparedStatement pstmt=null;
-					Connection con=null;
-					String sql="delete from secretroomtbl where count=0";
-					try {
-						con = getConnection();
-						pstmt=con.prepareStatement(sql);
-						pstmt.executeUpdate();
-					} catch (SQLException e) {
-						e.printStackTrace();
-						return false;
-					}finally {
-						close(con,pstmt);
-					}return true;
-				}
 				public boolean deleteRoomAll() {
 					PreparedStatement pstmt=null;
 					Connection con=null;

@@ -107,9 +107,9 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 		RoomDAO dao=new RoomDAO();
 		//서버시작
 		void startServer() {
-			executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
+			//executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
 			//ExecutorService 객체를 얻을려면 Executors.newFixedThreadPool 사용 Runtime.getRuntime().availableProcessors()==cpu코어수 만큼 스레드 생성
-			//executorService = Executors.newFixedThreadPool(10);
+			executorService = Executors.newFixedThreadPool(100);
 			try {
 				serverSocket=new ServerSocket(); //객체생성
 				serverSocket.bind(new InetSocketAddress(5001)); //5001번포트와 연결
@@ -155,10 +155,10 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 					serverSocket.close();//서버닫기
 				if(executorService!=null && !executorService.isShutdown())
 					executorService.shutdown(); //스레드풀닫기
-				mainText.append("stopserver서버종료\n");
+				mainText.append("일반서버종료\n");
 			}catch(Exception e) {}
-			togglebtn.setText("서버정지");
-			togglebtn.setSelected(false);
+			//togglebtn.setText("서버정지");
+			//togglebtn.setSelected(false);
 		}
 		//클라이언트가 접속할때마다 데이터를 받고 보내는 스레드생성
 		class Client{
@@ -232,9 +232,9 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 			RoomDAO dao=new RoomDAO();
 			//서버시작
 			void startServer() {
-				s_executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
+				//s_executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()); 
 				//ExecutorService 객체를 얻을려면 Executors.newFixedThreadPool 사용 Runtime.getRuntime().availableProcessors()==cpu코어수 만큼 스레드 생성
-				//executorService = Executors.newFixedThreadPool(10);
+				s_executorService = Executors.newFixedThreadPool(100);
 				try {
 					serverSocket=new ServerSocket(); //객체생성
 					serverSocket.bind(new InetSocketAddress(5004)); //5004번포트와 연결
@@ -257,13 +257,11 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 								Client client=new Client(socket);//클라이언트객체생성
 								connections.add(client);//벡터에저장
 								s_mainText.append("[비밀대화방 이용자 수 :"+connections.size()+"명]\n");
-								RoomDAO dao=new RoomDAO();
-								dao.deleteRoom();
 							}catch(Exception e) {
 								if(!serverSocket.isClosed())
 									stopServer();
 								break;//위와 같은 예외처리
-							}
+							};
 						}
 					}
 				};

@@ -137,6 +137,7 @@ public class login extends JFrame implements ActionListener{
 		String id=txtid.getText();
 		char[] pw=txtpwd.getPassword();//입력한 아이디
 		String passwd=new String(pw,0,pw.length); //입력한 비밀번호
+		int a=0;
 		vec=dao.get_pw_id();
 		for(int i=0;i<vec.size();i++) {
 			vo=vec.get(i); //DB에 있는 것
@@ -145,12 +146,14 @@ public class login extends JFrame implements ActionListener{
 					//frame.setVisible(true); //메인창 띄우기
 					frame.setVisible(true);
 					dispose();//로그인창 닫기
-					break;
-				}else {
-					JOptionPane.showMessageDialog(this, "아이디/비밀번호를 잘못 입력하셨습니다.");
+					a=1;
 					break;
 				}
 		}
+		if(a==0) {
+			JOptionPane.showMessageDialog(this, "아이디/비밀번호를 잘못 입력하셨습니다.");
+		}
+		
 	}
 
 

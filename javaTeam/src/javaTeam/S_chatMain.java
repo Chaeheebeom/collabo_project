@@ -170,11 +170,9 @@ public class S_chatMain extends JFrame{
 						socket.connect(new InetSocketAddress("192.168.0.67", 5004)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
 						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것//여기서도 패스워드를 날려버림
-						dao.update_count(rvo, 1, rvo.getRoomNumber());//방DB에 접속헀을때 1카운트함
-						send(data);                                    //이유:DB카운트가 0일경우삭제하기 위함
+						send(data);                                  
 					}catch(Exception e) {
 						if(!socket.isClosed())
-							dao.update_count(rvo, -1, rvo.getRoomNumber());
 							stopClient();
 						return;
 					}receive(); //서버에서 보낸것 받기
@@ -186,7 +184,7 @@ public class S_chatMain extends JFrame{
 		void stopClient() {
 			try {
 				RoomDAO dao=new RoomDAO();
-				dao.update_count(rvo, -1, rvo.getRoomNumber());
+
 				if(!socket.isClosed() && socket!=null)
 					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
 			}catch(Exception e) {}
