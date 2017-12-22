@@ -168,6 +168,8 @@ public class ChatMain extends JFrame implements ActionListener{
 				String data=chatField.getText(); //입력한 메시지를 
 				send(id+"-"+data); //보내는거야
 				chatField.setText(""); //입력창 비워주고
+				String[] newdata=data.split("-");// 내가 보낼 데이터를 
+				chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
 			}
 		}
 		@Override//전송버튼눌렀을때
@@ -176,6 +178,8 @@ public class ChatMain extends JFrame implements ActionListener{
 			String data=chatField.getText();//이하동문
 			send(id+"-"+data); //뒤에 아이디 붙잉기
 			chatField.setText("");
+			String[] newdata=data.split("-");// 내가 보낼 데이터를 
+			chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
 		}
 	}	
 	
@@ -219,10 +223,8 @@ public class ChatMain extends JFrame implements ActionListener{
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
 							String[] newdata=data.split("-");//받은것을 나누어서
-								if(newdata.length==2) { //비밀대화창으로 보낸건지확인
 									if(!(newdata[0].equals(vo.getId()))) //아니라면 아이디가 내꺼가아니면 
 										chatArea.append(newdata[0]+">"+newdata[1]+"\n");//출력
-								}
 						}catch(Exception e) {e.printStackTrace();
 							chatArea.append("[시스템오류:전송불가]");//예외처리부분
 							stopClient();
@@ -238,9 +240,6 @@ public class ChatMain extends JFrame implements ActionListener{
 					try {
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
-						String[] newdata=data.split("-");// 내가 보낼 데이터를 
-						if((newdata[0].equals(vo.getId()))) //이부분은 위리시브랑 달라야만 함! 내것을 출력하느냐 마느냐이기 떄문
-							chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
 						os.write(byteArr);//서버에 보내버리기(보낼땐 온전한 데이터를 보낸다)
 						os.flush();
 					}catch(Exception e) {

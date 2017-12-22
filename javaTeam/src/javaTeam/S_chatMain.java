@@ -72,7 +72,7 @@ public class S_chatMain extends JFrame{
 		this.lvo=lvo;
 		this.rvo=rvo;
 		setTitle("OO\uD1A1");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 300, 590);
 		
 		contentPane = new JPanel();
@@ -88,10 +88,26 @@ public class S_chatMain extends JFrame{
 	    JPanel north_panel=new JPanel();
 	    north_panel.setLayout(new BorderLayout(0,0));
 	    JLabel mainLabel=new JLabel("비밀대화");
-
+	    
 	    north_panel.add(mainLabel);
+	    
+	    JLabel roomLabel = new JLabel("");
+	    roomLabel.setText(rvo.getRoomName());
+	    north_panel.add(roomLabel, BorderLayout.NORTH);
 	   
 	    chatPanel.add(north_panel,BorderLayout.NORTH);
+	    
+	    JButton btnExit = new JButton("비밀대화종료");
+	    north_panel.add(btnExit, BorderLayout.EAST);
+	    btnExit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RoomDAO dao=new RoomDAO(); //종료버튼
+				stopClient();
+				dispose();
+			}
+		});
 	    
 	    chatArea=new JTextArea();  //서로 대화하는 곳
 	    chatScroll.setViewportView(chatArea);
@@ -123,19 +139,23 @@ public class S_chatMain extends JFrame{
 		public void keyPressed(KeyEvent e) {
 			if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 				String id=lvo.getId();
-				String passwd=rvo.getRoomPasswd();
+				int roomNumber=rvo.getRoomNumber();
 				String data=chatField.getText();
-				send(id+"-"+data+"-"+passwd);
+				send(id+"-"+roomNumber+"-"+data); //0: 보낸아이디 1:방넘버 2:내용
 				chatField.setText("");
+				String[] newdata=data.split("-");
+				chatArea.append("나>"+newdata[2]+"\n");
 			}
 		}
 		@Override//전송버튼눌렀을때
 		public void actionPerformed(ActionEvent e) {
 			String id=lvo.getId();
-			String passwd=rvo.getRoomPasswd();
+			int roomNumber=rvo.getRoomNumber();
 			String data=chatField.getText();
-			send(id+"-"+data+"-"+passwd); //이하동문
+			send(id+"-"+roomNumber+"-"+data); //이하동문
 			chatField.setText("");
+			String[] newdata=data.split("-");
+			chatArea.append("나>"+newdata[2]+"\n");
 		}
 	}	
 	
@@ -146,19 +166,17 @@ public class S_chatMain extends JFrame{
 			Thread thread=new Thread() { //스레드생성
 				@Override
 				public void run() {
+					RoomDAO dao=new RoomDAO();
 					try {
 						socket = new Socket();
-						socket.connect(new InetSocketAddress("192.168.0.67", 5001)); //접속하는 부분
+						socket.connect(new InetSocketAddress("192.168.0.67", 5004)); //접속하는 부분
 						chatArea.append("연결되었습니다 "+socket.getRemoteSocketAddress()+"\n");
 						String data=lvo.getId()+"-"+lvo.getId()+"님이 입장하셨습니다.-"+"-"+rvo.roomPasswd;//다른 사람에게 입장을 알리는 것//여기서도 패스워드를 날려버림
-						RoomDAO dao=new RoomDAO();
 						dao.update_count(rvo, 1, rvo.getRoomNumber());//방DB에 접속헀을때 1카운트함
 						send(data);                                    //이유:DB카운트가 0일경우삭제하기 위함
 					}catch(Exception e) {
-						RoomDAO dao=new RoomDAO();
-						dao.update_count(rvo, -1, rvo.getRoomNumber());//위와 반대
-						dao.deleteRoom();//종료할떄삭제하는거야
 						if(!socket.isClosed())
+							dao.update_count(rvo, -1, rvo.getRoomNumber());
 							stopClient();
 						return;
 					}receive(); //서버에서 보낸것 받기
@@ -171,7 +189,6 @@ public class S_chatMain extends JFrame{
 			try {
 				RoomDAO dao=new RoomDAO();
 				dao.update_count(rvo, -1, rvo.getRoomNumber());
-				dao.deleteRoom();//종료할떄삭제하는거야
 				if(!socket.isClosed() && socket!=null)
 					socket.close(); //소켓이 닫혀인징않거나 비어있지않다면 닫기
 			}catch(Exception e) {}
@@ -187,9 +204,9 @@ public class S_chatMain extends JFrame{
 							if(readByte==-1) {throw new IOException();}//읽을것이없을경우 예외던지기
 							String data=new String(byteArr, 0, readByte,"UTF-8");//화면에 출력하기위한 변환
 							String[] newdata=data.split("-");
-								if(newdata[2].equals(rvo.roomPasswd)) {//이 비밀대화창에 보낸것이 맞는가 확이나는 것
+								if(newdata[1].equals(String.valueOf(rvo.getRoomNumber()))) {//이 비밀대화창에 보낸것이 맞는가 확이나는 것
 									if(!(newdata[0].equals(lvo.getId()))) 
-										chatArea.append(newdata[0]+">"+newdata[1]+"\n");
+										chatArea.append(newdata[0]+">"+newdata[2]+"\n");
 								}
 						}catch(Exception e) {e.printStackTrace();
 							chatArea.append("[시스템오류:통신안됨]");
@@ -206,9 +223,6 @@ public class S_chatMain extends JFrame{
 					try {
 						byte byteArr[]=data.getBytes("UTF-8");
 						OutputStream os=socket.getOutputStream();
-						String[] newdata=data.split("-");
-						if((newdata[0].equals(lvo.getId())))
-							chatArea.append("나>"+newdata[1]+"\n");
 						os.write(byteArr);
 						os.flush();
 					}catch(Exception e) {

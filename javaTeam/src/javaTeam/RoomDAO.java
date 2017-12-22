@@ -13,8 +13,8 @@ public class RoomDAO {
 			Connection con=null;
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
-				String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";//DB로 접속하는거
-				//String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
+				//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true";//DB로 접속하는거
+				String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 				con=DriverManager.getConnection(url,"root","12345");
 			} catch (ClassNotFoundException | SQLException e) {
 				e.printStackTrace();
@@ -98,7 +98,6 @@ public class RoomDAO {
 					PreparedStatement pstmt =null;
 					ResultSet rs=null;
 					String sql="select * from secretroomtbl where roomnumber="+roomNumber;
-					System.out.println(sql);
 					RoomVO vo=null;
 					try {
 						con = getConnection();
@@ -123,7 +122,6 @@ public class RoomDAO {
 					PreparedStatement pstmt=null;
 					Connection con=null;
 					String sql="update secretroomtbl set count=? where roomnumber=?";
-					int result=0;
 					try {
 						con = getConnection();
 						pstmt=con.prepareStatement(sql);
@@ -131,7 +129,7 @@ public class RoomDAO {
 						newCount=newCount+count;
 						pstmt.setInt(1, newCount);
 						pstmt.setInt(2, roomNumber);
-						result=pstmt.executeUpdate();
+						pstmt.executeUpdate();
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}finally {
