@@ -272,7 +272,7 @@ public class ServerVer_2 extends JFrame implements ActionListener{
 			//서버정지
 			void stopServer()  {
 				RoomDAO dao=new RoomDAO();
-				dao.deleteRoom();
+				dao.deleteRoomAll();
 				Iterator<Client> iterator=connections.iterator(); //반복자 얻어내기
 				try {
 					while(iterator.hasNext()) {

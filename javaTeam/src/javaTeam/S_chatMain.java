@@ -143,8 +143,7 @@ public class S_chatMain extends JFrame{
 				String data=chatField.getText();
 				send(id+"-"+roomNumber+"-"+data); //0: 보낸아이디 1:방넘버 2:내용
 				chatField.setText("");
-				String[] newdata=data.split("-");
-				chatArea.append("나>"+newdata[2]+"\n");
+				chatArea.append("나>"+data+"\n");
 			}
 		}
 		@Override//전송버튼눌렀을때
@@ -154,8 +153,7 @@ public class S_chatMain extends JFrame{
 			String data=chatField.getText();
 			send(id+"-"+roomNumber+"-"+data); //이하동문
 			chatField.setText("");
-			String[] newdata=data.split("-");
-			chatArea.append("나>"+newdata[2]+"\n");
+			chatArea.append("나>"+data+"\n");
 		}
 	}	
 	

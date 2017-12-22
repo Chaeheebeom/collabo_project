@@ -152,5 +152,20 @@ public class RoomDAO {
 						close(con,pstmt);
 					}return true;
 				}
+				public boolean deleteRoomAll() {
+					PreparedStatement pstmt=null;
+					Connection con=null;
+					String sql="delete from secretroomtbl where roomnumber<=100";
+					try {
+						con = getConnection();
+						pstmt=con.prepareStatement(sql);
+						pstmt.executeUpdate();
+					} catch (SQLException e) {
+						e.printStackTrace();
+						return false;
+					}finally {
+						close(con,pstmt);
+					}return true;
+				}
 				
 }

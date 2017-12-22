@@ -168,8 +168,7 @@ public class ChatMain extends JFrame implements ActionListener{
 				String data=chatField.getText(); //입력한 메시지를 
 				send(id+"-"+data); //보내는거야
 				chatField.setText(""); //입력창 비워주고
-				String[] newdata=data.split("-");// 내가 보낼 데이터를 
-				chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
+				chatArea.append("나>"+data+"\n"); //내화면에 출력하는 것임
 			}
 		}
 		@Override//전송버튼눌렀을때
@@ -178,8 +177,7 @@ public class ChatMain extends JFrame implements ActionListener{
 			String data=chatField.getText();//이하동문
 			send(id+"-"+data); //뒤에 아이디 붙잉기
 			chatField.setText("");
-			String[] newdata=data.split("-");// 내가 보낼 데이터를 
-			chatArea.append("나>"+newdata[1]+"\n"); //내화면에 출력하는 것임
+			chatArea.append("나>"+data+"\n"); //내화면에 출력하는 것임
 		}
 	}	
 	
