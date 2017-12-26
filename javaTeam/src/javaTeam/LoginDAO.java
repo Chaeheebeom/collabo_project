@@ -13,8 +13,8 @@ public class LoginDAO {
 		Connection con=null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			//String url="jdbc:mysql://192.168.35.229:3306/javadb?useSSL=true"; //우리집컴퓨터DB로 접속하는 것임
-			String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
+			String url="jdbc:mysql://192.168.0.168:3306/javadb?useSSL=true"; //우리집컴퓨터DB로 접속하는 것임
+			//String url="jdbc:mysql://localhost:3306/javadb?useSSL=true";
 			con=DriverManager.getConnection(url,"root","12345");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
@@ -48,7 +48,7 @@ public class LoginDAO {
 	public int login_Insert(String id, String pwd, String name,int age, int phonenum,String gender) {
 		PreparedStatement pstmt=null;
 		Connection con=null;
-		String sql="insert into loginTBL(id,pwd,name,age,phonenum,gender) values(?,?,?,?,?,?)";
+		String sql="insert into logintbl(id,pwd,name,age,phonenum,gender) values(?,?,?,?,?,?)";
 		int result=0;
 		try {
 			con = getConnection();
@@ -72,7 +72,7 @@ public class LoginDAO {
 		Connection con=getConnection();
 		PreparedStatement pstmt =null;
 		ResultSet rs=null;
-		String sql="select * from loginTBL";
+		String sql="select * from logintbl";
 		Vector<LoginVO> vec=new Vector<>();
 		try {
 			con = getConnection();
@@ -102,7 +102,7 @@ public class LoginDAO {
 		Connection con=getConnection();
 		PreparedStatement pstmt =null;
 		ResultSet rs=null;
-		String sql="select * from loginTBL";
+		String sql="select * from logintbl";
 		Vector<String> vec=new Vector<>();
 		try {
 			con = getConnection();
@@ -123,7 +123,7 @@ public class LoginDAO {
 		Connection con=getConnection();
 		PreparedStatement pstmt =null;
 		ResultSet rs=null;
-		String sql="select * from loginTBL";
+		String sql="select * from logintbl";
 		Vector<LoginVO> vec=new Vector<>();
 		try {
 			con = getConnection();
